@@ -6,5 +6,19 @@ services:
     #   INSTALL4J_ADD_VM_PARAMS: -Xms4g -Xmx4g -XX:MaxDirectMemorySize=4g
     volumes:
       - ${PWD}/nexus-data:/nexus-data
+    # ports:
+    #   - 8081:8081/tcp
+    networks:
+      - devops
+  nginx:
+    image: nginx
+    volumes:
+      - ${PWD}/nginx/nginx.conf:/etc/nginx/nginx.conf
     ports:
-      - 8081:8081/tcp
+      - 80:80/tcp
+    networks:
+      - devops
+
+networks:
+  devops:
+    external: true
