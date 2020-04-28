@@ -155,6 +155,7 @@ _version: 1.10.0
 # Add domain to the `no_proxy` field, when you want disable proxy
 # for some special registry.
 proxy:
+  remoteurl: https://registry-1.docker.io
   http_proxy:
   https_proxy:
   # no_proxy endpoints will appended to 127.0.0.1,localhost,.local,.internal,log,db,redis,nginx,core,portal,postgresql,jobservice,registry,registryctl,clair,chartmuseum,notary-server
@@ -163,4 +164,3 @@ proxy:
     - core
     - jobservice
     - clair
-  remoteurl: https://registry-1.docker.io
