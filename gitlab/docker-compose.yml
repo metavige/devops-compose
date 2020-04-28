@@ -1,0 +1,30 @@
+version: '3'
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    # restartPolicy: always
+    hostname: gitlab
+    ports:
+      - '80:80'
+      - '8443:443'
+      - '8822:22'
+    environment:
+      - 'EXTERNAL_URL=http://gitlab/'
+    volumes:
+      - ${PWD}/storage/config:/etc/gitlab
+      - ${PWD}/storage/logs:/var/log/gitlab
+      - ${PWD}/storage/data:/var/opt/gitlab
+    networks:
+      - devops
+  runner:
+    image: gitlab/gitlab-runner
+    # restartPolicy: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${PWD}/runner/config:/etc/gitlab-runner
+    networks:
+      - devops
+
+networks:
+  devops:
+    external: true

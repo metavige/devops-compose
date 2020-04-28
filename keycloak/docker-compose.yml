@@ -1,0 +1,12 @@
+version: '3'
+services:
+  keycloak:
+    image: jboss/keycloak
+    environment:
+      - 'KEYCLOAK_USER=admin'
+      - 'KEYCLOAK_PASSWORD=admin'
+    #   INSTALL4J_ADD_VM_PARAMS: -Xms4g -Xmx4g -XX:MaxDirectMemorySize=4g
+    volumes:
+      - ${PWD}/deployments:/opt/jboss/keycloak/standalone/deployments
+    ports:
+      - 8080:8080/tcp

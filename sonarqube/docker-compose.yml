@@ -1,0 +1,15 @@
+version: '3'
+services:
+  sonarqube:
+    image: sonarqube:8.2-community
+    ports:
+      - 9000:9000
+    volumes:
+      - ${PWD}/data:/opt/sonarqube/data
+      # - ${PWD}/sonarqube/extensions:/opt/sonarqube/extensions
+    networks:
+      - devops
+
+networks:
+  devops:
+    external: true

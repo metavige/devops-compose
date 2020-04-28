@@ -1,0 +1,10 @@
+version: '3'
+services:
+  mattermost:
+    image: mattermost/mattermost-preview
+    ports:
+      - 8065:8065
+    extra_hosts:
+      - dockerhost:127.0.0.1
+    environment:
+      - 'MM_Default_Server_Locale:zh_TW'
