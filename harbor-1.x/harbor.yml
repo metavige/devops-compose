@@ -37,7 +37,7 @@ database:
   max_open_conns: 100
 
 # The default data volume
-data_volume: ${PWD}/data
+data_volume: ./data
 
 # Harbor Storage settings by default is using /data dir on local filesystem
 # Uncomment storage_service setting If you want to using external storage
@@ -84,7 +84,7 @@ log:
     # are all valid.
     rotate_size: 10M
     # The directory on your host that store log
-    location: ${PWD}/logs
+    location: ./logs
 
   # Uncomment following lines to enable external syslog endpoint.
   # external_endpoint:

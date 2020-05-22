@@ -5,8 +5,8 @@ services:
     ports:
       - 9000:9000
     volumes:
-      - ${PWD}/data:/opt/sonarqube/data
-      # - ${PWD}/sonarqube/extensions:/opt/sonarqube/extensions
+      - ./data:/opt/sonarqube/data
+      # - ./sonarqube/extensions:/opt/sonarqube/extensions
     networks:
       - devops
 

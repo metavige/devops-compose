@@ -1,0 +1,21 @@
+version: "2"
+
+services:
+  traefik:
+    image: "traefik:2.0"
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--api.insecure=true"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+    - devops
+
+networks:
+  devops:
+    external: true

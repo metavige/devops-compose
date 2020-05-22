@@ -7,6 +7,6 @@ services:
       - 'KEYCLOAK_PASSWORD=admin'
     #   INSTALL4J_ADD_VM_PARAMS: -Xms4g -Xmx4g -XX:MaxDirectMemorySize=4g
     volumes:
-      - ${PWD}/deployments:/opt/jboss/keycloak/standalone/deployments
+      - ./deployments:/opt/jboss/keycloak/standalone/deployments
     ports:
       - 8080:8080/tcp

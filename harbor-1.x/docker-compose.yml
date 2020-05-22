@@ -13,7 +13,7 @@ services:
       - SETGID
       - SETUID
     volumes:
-      - ${PWD}/logs/:/var/log/docker/:z
+      - ./logs/:/var/log/docker/:z
       - type: bind
         source: ./common/config/log/logrotate.conf
         target: /etc/logrotate.d/logrotate.conf
@@ -35,10 +35,10 @@ services:
       - SETGID
       - SETUID
     volumes:
-      - ${PWD}/data/registry:/storage:z
+      - ./data/registry:/storage:z
       - ./common/config/registry/:/etc/registry/:z
       - type: bind
-        source: ${PWD}/data/secret/registry/root.crt
+        source: ./data/secret/registry/root.crt
         target: /etc/registry/root.crt
     networks:
       - devops
@@ -63,7 +63,7 @@ services:
       - SETGID
       - SETUID
     volumes:
-      - ${PWD}/data/registry:/storage:z
+      - ./data/registry:/storage:z
       - ./common/config/registry/:/etc/registry/:z
       - type: bind
         source: ./common/config/registryctl/config.yml
@@ -90,7 +90,7 @@ services:
       - SETGID
       - SETUID
     volumes:
-      - ${PWD}/data/database:/var/lib/postgresql/data:z
+      - ./data/database:/var/lib/postgresql/data:z
     networks:
       - devops
     dns_search: .
@@ -115,18 +115,18 @@ services:
       - SETGID
       - SETUID
     volumes:
-      - ${PWD}/data/ca_download/:/etc/core/ca/:z
-      - ${PWD}/data/psc/:/etc/core/token/:z
-      - ${PWD}/data/:/data/:z
+      - ./data/ca_download/:/etc/core/ca/:z
+      - ./data/psc/:/etc/core/token/:z
+      - ./data/:/data/:z
       - ./common/config/core/certificates/:/etc/core/certificates/:z
       - type: bind
         source: ./common/config/core/app.conf
         target: /etc/core/app.conf
       - type: bind
-        source: ${PWD}/data/secret/core/private_key.pem
+        source: ./data/secret/core/private_key.pem
         target: /etc/core/private_key.pem
       - type: bind
-        source: ${PWD}/data/secret/keys/secretkey
+        source: ./data/secret/keys/secretkey
         target: /etc/core/key
     networks:
       - devops
@@ -176,7 +176,7 @@ services:
       - SETGID
       - SETUID
     volumes:
-      - ${PWD}/data/job_logs:/var/log/jobs:z
+      - ./data/job_logs:/var/log/jobs:z
       - type: bind
         source: ./common/config/jobservice/config.yml
         target: /etc/jobservice/config.yml
@@ -201,7 +201,7 @@ services:
       - SETGID
       - SETUID
     volumes:
-      - ${PWD}/data/redis:/var/lib/redis
+      - ./data/redis:/var/lib/redis
     networks:
       - devops
     dns_search: .

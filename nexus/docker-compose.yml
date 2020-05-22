@@ -1,21 +1,28 @@
 version: '2'
 services:
   nexus3:
+    restart: always
     image: sonatype/nexus3:latest
-    # environment:
-    #   INSTALL4J_ADD_VM_PARAMS: -Xms4g -Xmx4g -XX:MaxDirectMemorySize=4g
+    environment:
+      INSTALL4J_ADD_VM_PARAMS: -Xms4g -Xmx4g -XX:MaxDirectMemorySize=4g
     volumes:
-      - ${PWD}/nexus-data:/nexus-data
+      - ./nexus-data:/nexus-data
     # ports:
     #   - 8081:8081/tcp
     networks:
       - devops
   nginx:
+    restart: always
     image: nginx
     volumes:
-      - ${PWD}/nginx/nginx.conf:/etc/nginx/nginx.conf
-    ports:
-      - 80:80/tcp
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    # ports:
+    #   - 80:80/tcp
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nexus.rule=Host(`nexus.internal.local`)"
+      - "traefik.http.routers.nexus.entrypoints=web"
+      - "traefik.docker.network=devops"
     networks:
       - devops
 
