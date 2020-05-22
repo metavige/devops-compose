@@ -11,7 +11,14 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.portainer.rule=Host(`portainer.internal.local`)"
       - "traefik.http.routers.portainer.entrypoints=web"
+    #   - "traefik.http.services.portainer.loadbalancer.server.port=9000"
       - "traefik.docker.network=devops"
+    networks:
+    - devops
       
 volumes:
   portainer_data:
+
+networks:
+  devops:
+    external: true
