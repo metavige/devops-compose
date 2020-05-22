@@ -1,29 +1,32 @@
-version: '2'
+version: '3'
 networks:
   bridge:
     driver: bridge
 services:
   web:
-    image: "xwiki:lts-mysql-tomcat"
+    image: 'xwiki:lts-mysql-tomcat'
+    # image: xwiki-flavor-mysql-tomcat
+    # build:
+    #   context: xwiki
     container_name: xwiki-web
     depends_on:
       - db
-      - index
+      # - index
     ports:
-      - "8087:8080"
+      - '8087:8080'
     environment:
-      - XWIKI_VERSION=xwiki
+      # - XWIKI_VERSION=xwiki
       - DB_USER=xwiki
       - DB_PASSWORD=xwiki
       - DB_DATABASE=xwiki
       - DB_HOST=xwiki-db
-      - INDEX_HOST=xwiki-index
+      # - INDEX_HOST=xwiki-index
     volumes:
       - xwiki-data:/usr/local/xwiki
     networks:
       - bridge
   db:
-    image: "mysql:5.7"
+    image: 'mysql:5.7'
     container_name: xwiki-db
     volumes:
       - ./mysql/xwiki.cnf:/etc/mysql/conf.d/xwiki.cnf
@@ -35,15 +38,15 @@ services:
       - MYSQL_DATABASE=xwiki
     networks:
       - bridge
-  index:
-    image: "solr:7.2"
-    container_name: xwiki-index
-    volumes:
-      - ./solr:/docker-entrypoint-initdb.d
-      - solr-data:/opt/solr/server/solr
-    networks:
-      - bridge
+  # index:
+  #   image: 'solr:7.2'
+  #   container_name: xwiki-index
+  #   volumes:
+  #     - ./solr:/docker-entrypoint-initdb.d
+  #     - solr-data:/opt/solr/server/solr
+  #   networks:
+  #     - bridge
 volumes:
   mysql-data: {}
   xwiki-data: {}
-  solr-data: {}
+  # solr-data: {}
