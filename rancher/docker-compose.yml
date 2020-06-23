@@ -1,0 +1,19 @@
+version: '3'
+services:
+  server:
+    image: rancher/rancher:stable
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.rancher.rule=Host(`rancher.docker.internal`)'
+      - 'traefik.http.routers.rancher.entrypoints=web,websecure'
+      - 'traefik.docker.network=devops'
+    volumes:
+      - rancher-data:/var/lib/mysql
+    networks:
+      - devops
+volumes:
+  rancher-data:
+
+networks:
+  devops:
+    external: true

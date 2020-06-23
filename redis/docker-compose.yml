@@ -1,0 +1,17 @@
+version: '3'
+services:
+  server:
+    image: redis:6-alpine
+    labels:
+      - 'traefik.enable=true'
+      - "traefik.tcp.routers.redis.rule=HostSNI('*'')"
+      # - 'traefik.tcp.routers.redis.service=redisport'
+      - 'traefik.tcp.services.redis.loadbalancer.server.port=6379'
+      - 'traefik.docker.network=devops'
+
+    networks:
+      - devops
+
+networks:
+  devops:
+    external: true

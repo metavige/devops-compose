@@ -1,20 +1,20 @@
 version: '3'
 services:
   gitlab:
-    image: gitlab/gitlab-ce:latest
+    image: gitlab/gitlab-ce:13.0.0-ce.0
     # restartPolicy: always
     hostname: gitlab
     # ports:
-      # - '80:80'
-      # - '8443:443'
-      # - '8822:22'
+    # - '80:80'
+    # - '8443:443'
+    # - '8822:22'
     environment:
-      - 'EXTERNAL_URL=http://gitlab.internal.local/'
+      - 'EXTERNAL_URL=http://gitlab.docker.internal/'
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.gitlab.rule=Host(`gitlab.internal.local`)"
-      - "traefik.http.routers.gitlab.entrypoints=web"
-      - "traefik.docker.network=devops"
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.gitlab.rule=Host(`gitlab.docker.internal`)'
+      - 'traefik.http.routers.gitlab.entrypoints=web'
+      - 'traefik.docker.network=devops'
     volumes:
       - ./storage/config:/etc/gitlab
       - ./storage/logs:/var/log/gitlab

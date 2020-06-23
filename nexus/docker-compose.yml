@@ -19,10 +19,10 @@ services:
     # ports:
     #   - 80:80/tcp
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.nexus.rule=Host(`nexus.internal.local`)"
-      - "traefik.http.routers.nexus.entrypoints=web"
-      - "traefik.docker.network=devops"
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.nexus.rule=Host(`nexus.docker.internal`)'
+      - 'traefik.http.routers.nexus.entrypoints=web'
+      - 'traefik.docker.network=devops'
     networks:
       - devops
 
