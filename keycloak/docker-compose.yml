@@ -8,5 +8,11 @@ services:
     #   INSTALL4J_ADD_VM_PARAMS: -Xms4g -Xmx4g -XX:MaxDirectMemorySize=4g
     volumes:
       - ./deployments:/opt/jboss/keycloak/standalone/deployments
-    ports:
-      - 8080:8080/tcp
+    #ports:
+    #  - 8080:8080/tcp
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.keycloak.rule=Host(`keycloak.docker.internal`)'
+      - 'traefik.http.routers.keycloak.entrypoints=web'
+      - 'traefik.http.services.keycloak.loadbalancer.server.port=8080'
+      - 'traefik.docker.network=devops'
