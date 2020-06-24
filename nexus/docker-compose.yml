@@ -6,7 +6,8 @@ services:
     environment:
       INSTALL4J_ADD_VM_PARAMS: -Xms4g -Xmx4g -XX:MaxDirectMemorySize=4g
     volumes:
-      - ./nexus-data:/nexus-data
+      - nexus-data:/nexus-data
+      - nexus-blob:/nexus-data/blobs
     # ports:
     #   - 8081:8081/tcp
     networks:
@@ -29,3 +30,7 @@ services:
 networks:
   devops:
     external: true
+
+volumes:
+  nexus-data: {}
+  nexus-blob: {}
