@@ -1,0 +1,34 @@
+version: '3'
+services:
+  server:
+    image: jboss/jbpm-server-full:latest
+    environment:
+      JBPM_DB_DRIVER: postgres
+      JBPM_DB_HOST: postgres
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.jbpm.rule=Host(`jbpm.docker.internal`)'
+      - 'traefik.http.routers.jbpm.entrypoints=web'
+      - 'traefik.http.services.jbpm.loadbalancer.server.port=8080'
+      - 'traefik.docker.network=devops'
+    depends_on:
+      - postgres
+    networks:
+      - devops
+  postgres:
+    image: postgres:9.6
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: jbpm
+      POSTGRES_USER: jbpm
+      POSTGRES_PASSWORD: jbpm
+    networks:
+      - devops
+
+volumes:
+  postgres_data:
+
+networks:
+  devops:
+    external: true

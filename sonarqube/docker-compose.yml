@@ -2,13 +2,19 @@ version: '3'
 services:
   sonarqube:
     image: sonarqube:8.2-community
-    ports:
-      - 9000:9000
+    # ports:
+    #   - 9000:9000
     volumes:
-      - ./data:/opt/sonarqube/data
+      - ${PWD}/data:/opt/sonarqube/data
       # - ./sonarqube/extensions:/opt/sonarqube/extensions
     networks:
       - devops
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.sonarqube.rule=Host(`sonarqube.docker.internal`)'
+      - 'traefik.http.routers.sonarqube.entrypoints=web'
+      - 'traefik.http.services.sonarqube.loadBalancer.services.address=sonarqube:9000'
+      - 'traefik.docker.network=devops'
 
 networks:
   devops:

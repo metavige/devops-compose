@@ -5,5 +5,17 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=my-secret-pw
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-    ports:
-      - 3306:3306
+    # ports:
+    #   - 3306:3306
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.tcp.routers.sonarqube.rule=Host(`mysql.docker.internal`)'
+      - 'traefik.tcp.routers.sonarqube.entrypoints.mysql.address=":3306"'
+      - 'traefik.tcp.services.sonarqube.loadBalancer.services.address=mysql:3306'
+      - 'traefik.docker.network=devops'
+    networks:
+      - devops
+
+networks:
+  devops:
+    external: true
