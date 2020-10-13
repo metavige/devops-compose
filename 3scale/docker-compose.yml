@@ -1,0 +1,20 @@
+version: '3'
+services:
+  apicast:
+    image: registry.access.redhat.com/3scale-amp24/apicast-gateway
+    environment:
+      - 'THREESCALE_PORTAL_ENDPOINT=https://abc@3scale.docker.internal'
+    #ports:
+    #  - 8080:8080/tcp
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.3scale.rule=Host(`3scale.docker.internal`)'
+      - 'traefik.http.routers.3scale.entrypoints=web'
+      - 'traefik.http.services.3scale.loadbalancer.server.port=8080'
+      - 'traefik.docker.network=devops'
+    networks:
+      - devops
+
+networks:
+  devops:
+    external: true
