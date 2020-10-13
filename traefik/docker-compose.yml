@@ -3,16 +3,16 @@ version: '3'
 services:
   traefik:
     restart: always
-    image: 'traefik:2.0'
+    image: 'traefik:2.3'
     command:
       - '--providers.docker=true'
       - '--providers.docker.exposedbydefault=false'
       - '--entrypoints.web.address=:80'
-      - '--entrypoints.websecure.address=:443'
+      - '--entrypoints.web-secure.address=:443'
       - '--api.insecure=true'
     ports:
       - '80:80'
-      - '8080:8080'
+      - '8888:8080'
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
     networks:
