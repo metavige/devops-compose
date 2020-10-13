@@ -1,0 +1,22 @@
+version: '3'
+services:
+  jira:
+    image: atlassian/jira-software:8.5.6
+    volumes:
+      - jira_volume:/var/atlassian/application-data/jira
+
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.jira.rule=Host(`jira.docker.internal`)'
+      - 'traefik.http.routers.jira.entrypoints=web'
+      - 'traefik.http.services.jira.loadbalancer.server.port=8080'
+      - 'traefik.docker.network=devops'
+    networks:
+      - devops
+
+volumes:
+  jira_volume: {}
+
+networks:
+  devops:
+    external: true
