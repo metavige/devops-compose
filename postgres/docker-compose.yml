@@ -1,0 +1,28 @@
+version: '3.1'
+
+services:
+  db:
+    image: postgres:13
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgresl
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - devops
+
+  adminer:
+    image: adminer
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.nexus.rule=Host(`adminer.docker.internal`)'
+      - 'traefik.http.routers.nexus.entrypoints=web'
+      - 'traefik.docker.network=devops'
+    # ports:
+    #   - 8080:8080
+    networks:
+      - devops
+
+networks:
+  devops:
+    external: true
