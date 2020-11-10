@@ -21,7 +21,7 @@ services:
       - 'traefik.http.routers.keycloak.entrypoints=web'
       - 'traefik.http.services.keycloak.loadbalancer.server.port=8080'
       - 'traefik.tcp.routers.keycloak.rule=HostSNI(`keycloak.docker.internal`)'
-      - 'traefik.tcp.routers.keycloak.entrypoints=web-secure'
+      - 'traefik.tcp.routers.keycloak.entrypoints=websecure'
       - 'traefik.tcp.routers.keycloak.tls=true'
       - 'traefik.tcp.routers.keycloak.tls.passthrough=true'
       - 'traefik.tcp.services.keycloak.loadbalancer.server.port=8443'

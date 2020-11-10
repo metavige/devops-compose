@@ -8,13 +8,17 @@ services:
       - '--providers.docker=true'
       - '--providers.docker.exposedbydefault=false'
       - '--entrypoints.web.address=:80'
-      - '--entrypoints.web-secure.address=:443'
+      - '--entrypoints.websecure.address=:443'
       - '--api.insecure=true'
+      - '--providers.file.directory=/etc/traefik/dynamic_conf'
     ports:
       - '80:80'
+      - '443:443'
       - '8888:8080'
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
+      - '$PWD/certs:/certs'
+      - '$PWD/ssl.yml:/etc/traefik/dynamic_conf/ssl.yml:ro'
     networks:
       - devops
 

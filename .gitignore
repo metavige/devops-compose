@@ -6,3 +6,5 @@ harbor-1.x/data
 
 sonarqube/data
 *.tar.gz
+traefik/certs/traefik.crt
+traefik/certs/traefik.key

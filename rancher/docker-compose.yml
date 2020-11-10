@@ -2,10 +2,15 @@ version: '3'
 services:
   server:
     image: rancher/rancher:stable
+    hostname: rancher.docker.internal
+    command:
+      - ' --acme-domain rancher.docker.internal'
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.rancher.rule=Host(`rancher.docker.internal`)'
-      - 'traefik.http.routers.rancher.entrypoints=web,websecure'
+      - 'traefik.http.routers.rancher.tls=true'
+      - 'traefik.http.routers.rancher.rule=HostRegexp(`rancher.docker.internal`)'
+      - 'traefik.http.routers.rancher.entrypoints=websecure'
+      - 'traefik.http.services.rancher-service.loadbalancer.server.port=80'
       - 'traefik.docker.network=devops'
     volumes:
       - rancher-data:/var/lib/mysql
