@@ -21,6 +21,16 @@ services:
       - '$PWD/ssl.yml:/etc/traefik/dynamic_conf/ssl.yml:ro'
     networks:
       - devops
+  whoami:
+    image: traefik/whoami
+    labels:
+      - traefik.enable=true
+      - 'traefik.http.routers.whoami.entrypoints=web,websecure'
+      - 'traefik.http.routers.whoami.tls=true'
+      - 'traefik.http.routers.whoami.rule=HostRegexp(`whoami.docker.internal`)'
+      - 'traefik.docker.network=devops'
+    networks:
+      - devops
 
 networks:
   devops:
