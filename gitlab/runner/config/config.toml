@@ -7,7 +7,7 @@ log_level = "debug"
 
 [[runners]]
   name = "sample-runner"
-  url = "http://gitlab/"
+  url = "https://gitlab.docker.internal/"
   token = "6-2v58syLAoirnX34ZuY"
   executor = "shell"
   [runners.custom_build_dir]
@@ -17,7 +17,7 @@ log_level = "debug"
 
 [[runners]]
   name = "docker-runner"
-  url = "http://gitlab/"
+  url = "https://gitlab.docker.internal/"
   token = "p1LsQi7s_SSRhi4yTws6"
   executor = "docker"
   cache_dir = "/mnt/docker_cache"

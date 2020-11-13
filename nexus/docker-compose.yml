@@ -21,9 +21,9 @@ services:
     #   - 80:80/tcp
     labels:
       - 'traefik.enable=true'
-      # - 'traefik.http.routers.nexus.tls=true'
+      - 'traefik.http.routers.nexus.tls=true'
       - 'traefik.http.routers.nexus.rule=Host(`nexus.docker.internal`)'
-      - 'traefik.http.routers.nexus.entrypoints=web'
+      - 'traefik.http.routers.nexus.entrypoints=websecure'
       - 'traefik.docker.network=devops'
     networks:
       - devops

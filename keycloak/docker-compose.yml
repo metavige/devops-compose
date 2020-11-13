@@ -16,15 +16,11 @@ services:
     # command: ./standard
     labels:
       - 'traefik.enable=true'
-      - 'traefik.docker.network=devops'
+      - 'traefik.http.routers.keycloak.tls=true'
       - 'traefik.http.routers.keycloak.rule=Host(`keycloak.docker.internal`)'
-      - 'traefik.http.routers.keycloak.entrypoints=web'
-      - 'traefik.http.services.keycloak.loadbalancer.server.port=8080'
-      - 'traefik.tcp.routers.keycloak.rule=HostSNI(`keycloak.docker.internal`)'
-      - 'traefik.tcp.routers.keycloak.entrypoints=websecure'
-      - 'traefik.tcp.routers.keycloak.tls=true'
-      - 'traefik.tcp.routers.keycloak.tls.passthrough=true'
-      - 'traefik.tcp.services.keycloak.loadbalancer.server.port=8443'
+      - 'traefik.http.routers.keycloak.entrypoints=websecure'
+      - 'traefik.http.services.keycloak-service.loadbalancer.server.port=8080'
+      - 'traefik.docker.network=devops'
     networks:
       - devops
     # depends_on:
