@@ -1,0 +1,36 @@
+version: "3"
+
+networks:
+  gitea:
+    external: false
+
+services:
+  server:
+    image: gitea/gitea:latest
+    container_name: gitea
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+    # restart: always
+    networks:
+      - devops
+    volumes:
+      - gitea-data:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    labels:
+      - 'traefik.http.routers.gitea.tls=true'
+      - 'traefik.http.routers.gitea.rule=Host(`gitea.docker.internal`)'
+      - 'traefik.http.routers.gitea.entrypoints=websecure'
+      - 'traefik.http.services.gitea-service.loadbalancer.server.port=3000'
+      - 'traefik.docker.network=devops'
+    # ports:
+    #   - "3000:3000"
+    #   - "222:22"
+
+networks:
+  devops:
+    external: true
+
+volumes:
+  gitea-data: {}
