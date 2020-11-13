@@ -19,6 +19,7 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     labels:
+      - 'traefik.enable=true'
       - 'traefik.http.routers.gitea.tls=true'
       - 'traefik.http.routers.gitea.rule=Host(`gitea.docker.internal`)'
       - 'traefik.http.routers.gitea.entrypoints=websecure'

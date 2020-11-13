@@ -6,30 +6,46 @@ services:
     image: 'traefik:2.3'
     hostname: traefik-devops
     command:
+      - '--log.level=DEBUG'
+      - '--global.checkNewVersion=true'
       - '--providers.docker=true'
       - '--providers.docker.exposedbydefault=true'
       - '--entrypoints.web.address=:80'
       - '--entrypoints.websecure.address=:443'
       - '--api.insecure=true'
       - '--providers.file.directory=/etc/traefik/dynamic_conf'
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.traefik.tls=true'
+      - 'traefik.http.routers.traefik.rule=HostRegexp(`traefik.docker.internal`)'
+      - 'traefik.http.routers.traefik.entrypoints=websecure'
+      - 'traefik.http.services.traefik-service.loadbalancer.server.port=8080'
+      # middleware redirect
+      - 'traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https'
+      # global redirect to https
+      - 'traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)'
+      - 'traefik.http.routers.http-catchall.entrypoints=web'
+      - 'traefik.http.routers.http-catchall.middlewares=redirect-to-https@docker'
     ports:
       - '80:80'
       - '443:443'
-      - '8888:8080'
+      # - '8888:8080'
     volumes:
+      - '/etc/timezone:/etc/timezone:ro'
+      - '/etc/localtime:/etc/localtime:ro'
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
       - '$PWD/certs:/certs'
-      - '$PWD/ssl.yml:/etc/traefik/dynamic_conf/ssl.yml:ro'
-      # - '$PWD/pilot.yml:/etc/traefik/dynamic_conf/pilot.yml:ro'
+      - '$PWD/conf:/etc/traefik/dynamic_conf:ro'
+      - '$PWD/logs:/var/log/traefik'
     networks:
       - devops
   whoami:
     image: traefik/whoami
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.whoami.entrypoints=web,websecure'
+      - 'traefik.http.routers.whoami.entrypoints=websecure'
       - 'traefik.http.routers.whoami.tls=true'
-      - 'traefik.http.routers.whoami.rule=HostRegexp(`whoami.docker.internal`)'
+      - 'traefik.http.routers.whoami.rule=hostregexp(`whoami.docker.internal`)'
       - 'traefik.docker.network=devops'
     networks:
       - devops

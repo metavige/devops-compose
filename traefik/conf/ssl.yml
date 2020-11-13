@@ -1,0 +1,10 @@
+tls:
+  certificates:
+    - certFile: /certs/traefik.crt
+      keyFile: /certs/traefik.key
+
+  options:
+    default:
+      minVersion: VersionTLS12
+      cipherSuites:
+        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
