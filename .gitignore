@@ -8,3 +8,4 @@ sonarqube/data
 *.tar.gz
 traefik/certs/traefik.crt
 traefik/certs/traefik.key
+traefik/pilot.yml

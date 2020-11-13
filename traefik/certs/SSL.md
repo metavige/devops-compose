@@ -1,12 +1,19 @@
 ### 產生憑證
 
-```
-openssl req -x509 -nodes -newkey rsa:2048 -days 350 -keyout traefik.key -out traefik.crt -config req.cnf -extensions 'v3_req'
-```
-
-- 放到 `certs` 目錄下
-- 記得信任憑證
+- 安裝 `mkcert`
 
 ```
-$ certtool i ./traefik.crt
+$ brew install mkcert
+```
+
+- 建立根憑證，並且安裝
+
+```
+$ mkcert -install
+```
+
+- 建立 traefik 憑證
+
+```
+$ mkcert -cert-file traefik.crt -key-file traefik.key "*.docker.internal" "docker.internal"
 ```

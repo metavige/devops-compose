@@ -4,6 +4,7 @@ services:
   traefik:
     restart: always
     image: 'traefik:2.3'
+    hostname: traefik-devops
     command:
       - '--providers.docker=true'
       - '--providers.docker.exposedbydefault=false'
@@ -19,12 +20,13 @@ services:
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
       - '$PWD/certs:/certs'
       - '$PWD/ssl.yml:/etc/traefik/dynamic_conf/ssl.yml:ro'
+      # - '$PWD/pilot.yml:/etc/traefik/dynamic_conf/pilot.yml:ro'
     networks:
       - devops
   whoami:
     image: traefik/whoami
     labels:
-      - traefik.enable=true
+      - 'traefik.enable=true'
       - 'traefik.http.routers.whoami.entrypoints=web,websecure'
       - 'traefik.http.routers.whoami.tls=true'
       - 'traefik.http.routers.whoami.rule=HostRegexp(`whoami.docker.internal`)'

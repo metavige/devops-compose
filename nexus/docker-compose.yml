@@ -2,7 +2,7 @@ version: '2'
 services:
   nexus3:
     restart: always
-    image: sonatype/nexus3:latest
+    image: sonatype/nexus3:3.28.0
     environment:
       INSTALL4J_ADD_VM_PARAMS: -Xms4g -Xmx4g -XX:MaxDirectMemorySize=4g
     volumes:
@@ -21,6 +21,7 @@ services:
     #   - 80:80/tcp
     labels:
       - 'traefik.enable=true'
+      # - 'traefik.http.routers.nexus.tls=true'
       - 'traefik.http.routers.nexus.rule=Host(`nexus.docker.internal`)'
       - 'traefik.http.routers.nexus.entrypoints=web'
       - 'traefik.docker.network=devops'
