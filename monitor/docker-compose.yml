@@ -1,0 +1,28 @@
+version: '3'
+services:
+  cadvisor:
+    image: gcr.io/google-containers/cadvisor:latest
+    container_name: cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      # - /var/run/docker.sock:/var/run/docker.sock:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+    devices:
+      - /dev/kmsg
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.cadvisor.entrypoints=websecure'
+      - 'traefik.http.routers.cadvisor.tls=true'
+      - 'traefik.http.routers.cadvisor.rule=hostregexp(`cadvisor.docker.internal`)'
+      - 'traefik.http.services.cadvisor.loadbalancer.server.port=8080'
+      - 'traefik.docker.network=devops'
+    networks:
+      - devops
+
+networks:
+  devops:
+    external: true

@@ -19,7 +19,7 @@ services:
       - 'traefik.http.routers.traefik.tls=true'
       - 'traefik.http.routers.traefik.rule=HostRegexp(`traefik.docker.internal`)'
       - 'traefik.http.routers.traefik.entrypoints=websecure'
-      - 'traefik.http.services.traefik-service.loadbalancer.server.port=8080'
+      - 'traefik.http.services.traefik.loadbalancer.server.port=8080'
       # middleware redirect
       - 'traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https'
       # global redirect to https
@@ -34,9 +34,9 @@ services:
       - '/etc/timezone:/etc/timezone:ro'
       - '/etc/localtime:/etc/localtime:ro'
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
-      - '$PWD/certs:/certs'
-      - '$PWD/conf:/etc/traefik/dynamic_conf:ro'
-      - '$PWD/logs:/var/log/traefik'
+      - '${PWD}/certs:/certs'
+      - '${PWD}/conf:/etc/traefik/dynamic_conf:ro'
+      - '${PWD}/logs:/var/log/traefik'
     networks:
       - devops
   whoami:

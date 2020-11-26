@@ -1,5 +1,4 @@
-version: '2'
-
+version: '3'
 services:
   portainer:
     image: portainer/portainer
@@ -9,15 +8,16 @@ services:
       - portainer_data:/data
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.portainer.rule=Host(`portainer.docker.internal`)'
-      - 'traefik.http.routers.portainer.entrypoints=web'
-      #   - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+      - 'traefik.http.routers.portainer.tls=true'
+      - 'traefik.http.routers.portainer.rule=HostRegexp(`portainer.docker.internal`)'
+      - 'traefik.http.routers.portainer.entrypoints=websecure'
+      - 'traefik.http.services.portainer.loadbalancer.server.port=9000'
       - 'traefik.docker.network=devops'
     networks:
       - devops
 
 volumes:
-  portainer_data:
+  portainer_data: {}
 
 networks:
   devops:

@@ -6,8 +6,10 @@ services:
       - 'KEYCLOAK_USER=keycloak'
       - 'KEYCLOAK_PASSWORD=keycloak'
       - 'PROXY_ADDRESS_FORWARDING=true'
-      # - 'DB_VENDOR=postgres'
-      # - 'DB_ADDR=postgres'
+      - 'DB_VENDOR=postgres'
+      - 'DB_ADDR=postgres'
+      - 'DB_USER=keycloak'
+      - 'DB_PASSWORD=keycloak'
     #   INSTALL4J_ADD_VM_PARAMS: -Xms4g -Xmx4g -XX:MaxDirectMemorySize=4g
     # volumes:
     #   - ./deployments:/opt/jboss/keycloak/standalone/deployments
@@ -19,23 +21,25 @@ services:
       - 'traefik.http.routers.keycloak.tls=true'
       - 'traefik.http.routers.keycloak.rule=Host(`keycloak.docker.internal`)'
       - 'traefik.http.routers.keycloak.entrypoints=websecure'
-      - 'traefik.http.services.keycloak-service.loadbalancer.server.port=8080'
+      - 'traefik.http.services.keycloak.loadbalancer.server.port=8080'
+      - 'traefik.http.services.keycloak.loadbalancer.sticky.cookie.name=keycloak_sticky'
+      - 'traefik.http.services.keycloak.loadbalancer.sticky.cookie.secure=true'
+      - 'traefik.http.services.keycloak.loadbalancer.sticky.cookie.httpOnly=true'
       - 'traefik.docker.network=devops'
     networks:
       - devops
-    # depends_on:
-    #   - postgres
-  # Note: 新版本才支援 external database
-  # postgres:
-  #   image: postgres:9.6
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   environment:
-  #     - 'POSTGRES_DB=keycloak'
-  #     - 'POSTGRES_USER=keycloak'
-  #     - 'POSTGRES_PASSWORD=keycloak'
-  #   networks:
-  #     - devops
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:9.6
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - 'POSTGRES_DB=keycloak'
+      - 'POSTGRES_USER=keycloak'
+      - 'POSTGRES_PASSWORD=keycloak'
+    networks:
+      - devops
 
 volumes:
   postgres_data: {}
