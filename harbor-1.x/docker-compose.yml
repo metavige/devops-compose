@@ -3,7 +3,7 @@ services:
   log:
     image: goharbor/harbor-log:v1.10.2
     container_name: harbor-log
-    restart: always
+    # restart: always
     dns_search: .
     cap_drop:
       - ALL
@@ -27,7 +27,7 @@ services:
   registry:
     image: goharbor/registry-photon:v1.10.2
     container_name: registry
-    restart: always
+    # restart: always
     cap_drop:
       - ALL
     cap_add:
@@ -55,7 +55,7 @@ services:
     container_name: registryctl
     env_file:
       - ./common/config/registryctl/env
-    restart: always
+    # restart: always
     cap_drop:
       - ALL
     cap_add:
@@ -81,7 +81,7 @@ services:
   postgresql:
     image: goharbor/harbor-db:v1.10.2
     container_name: harbor-db
-    restart: always
+    # restart: always
     cap_drop:
       - ALL
     cap_add:
@@ -108,7 +108,7 @@ services:
     container_name: harbor-core
     env_file:
       - ./common/config/core/env
-    restart: always
+    # restart: always
     cap_drop:
       - ALL
     cap_add:
@@ -144,7 +144,7 @@ services:
   portal:
     image: goharbor/harbor-portal:v1.10.2
     container_name: harbor-portal
-    restart: always
+    # restart: always
     cap_drop:
       - ALL
     cap_add:
@@ -168,7 +168,7 @@ services:
     container_name: harbor-jobservice
     env_file:
       - ./common/config/jobservice/env
-    restart: always
+    # restart: always
     cap_drop:
       - ALL
     cap_add:
@@ -193,7 +193,7 @@ services:
   redis:
     image: goharbor/redis-photon:v1.10.2
     container_name: redis
-    restart: always
+    # restart: always
     cap_drop:
       - ALL
     cap_add:
@@ -215,7 +215,7 @@ services:
   proxy:
     image: goharbor/nginx-photon:v1.10.2
     container_name: nginx
-    restart: always
+    # restart: always
     cap_drop:
       - ALL
     cap_add:

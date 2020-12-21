@@ -6,7 +6,7 @@ services:
     image: 'traefik:2.3'
     hostname: traefik-devops
     command:
-      - '--log.level=DEBUG'
+      - '--log.level=INFO'
       - '--global.checkNewVersion=true'
       - '--providers.docker=true'
       - '--providers.docker.exposedbydefault=true'
@@ -39,16 +39,16 @@ services:
       - '${PWD}/logs:/var/log/traefik'
     networks:
       - devops
-  whoami:
-    image: traefik/whoami
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.whoami.entrypoints=websecure'
-      - 'traefik.http.routers.whoami.tls=true'
-      - 'traefik.http.routers.whoami.rule=hostregexp(`whoami.docker.internal`)'
-      - 'traefik.docker.network=devops'
-    networks:
-      - devops
+  # whoami:
+  #   image: traefik/whoami
+  #   labels:
+  #     - 'traefik.enable=true'
+  #     - 'traefik.http.routers.whoami.entrypoints=websecure'
+  #     - 'traefik.http.routers.whoami.tls=true'
+  #     - 'traefik.http.routers.whoami.rule=hostregexp(`whoami.docker.internal`)'
+  #     - 'traefik.docker.network=devops'
+  #   networks:
+  #     - devops
 
 networks:
   devops:
