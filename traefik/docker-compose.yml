@@ -3,7 +3,7 @@ version: '3'
 services:
   traefik:
     restart: always
-    image: 'traefik:2.3'
+    image: 'traefik:2.4'
     hostname: traefik-devops
     command:
       - '--log.level=INFO'
@@ -31,7 +31,7 @@ services:
       - '443:443'
       # - '8888:8080'
     volumes:
-      - '/etc/timezone:/etc/timezone:ro'
+      # - '/etc/timezone:/etc/timezone:ro'
       - '/etc/localtime:/etc/localtime:ro'
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
       - '${PWD}/certs:/certs'

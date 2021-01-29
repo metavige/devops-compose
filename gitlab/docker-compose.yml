@@ -1,8 +1,7 @@
 version: '3'
 services:
   gitlab:
-    image: gitlab/gitlab-ce:13.0.0-ce.0
-    # restartPolicy: always
+    image: gitlab/gitlab-ce:latest
     hostname: gitlab.docker.internal
     # ports:
     # - '80:80'
@@ -15,19 +14,17 @@ services:
       - 'traefik.http.routers.gitlab.tls=true'
       - 'traefik.http.routers.gitlab.rule=HostRegexp(`gitlab.docker.internal`)'
       - 'traefik.http.routers.gitlab.entrypoints=websecure'
-      # - 'traefik.http.services.gitlab-service.loadbalancer.server.port=8080'
+      - 'traefik.http.services.gitlab.loadbalancer.server.port=80'
       - 'traefik.docker.network=devops'
     volumes:
-      - ./storage/config:/etc/gitlab
-      - ./storage/logs:/var/log/gitlab
-      - ./storage/data:/var/opt/gitlab
+      - gitlab-config:/etc/gitlab 
+      - gitlab-data:/var/opt/gitlab
     networks:
       - devops
   runner:
     image: gitlab/gitlab-runner
-    # restartPolicy: always
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./runner/config:/etc/gitlab-runner
     networks:
       - devops
@@ -35,3 +32,7 @@ services:
 networks:
   devops:
     external: true
+
+volumes:
+  gitlab-config: {} 
+  gitlab-data: {}
