@@ -1,0 +1,32 @@
+version: "3"
+services:
+  rabbitmq:
+    image: rabbitmq:3.8-management-alpine
+    ports:
+    - "5672:5672"
+    container_name: rabbitmq
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.rabbitmq.tls=true'
+      - 'traefik.http.routers.rabbitmq.rule=Host(`rabbitmq.docker.internal`)'
+      - 'traefik.http.routers.rabbitmq.entrypoints=websecure'
+      - 'traefik.http.services.rabbitmq.loadbalancer.server.port=15672'
+      - 'traefik.docker.network=devops'
+    environment:
+      - 'RABBITMQ_DEFAULT_USER=guest'
+      - 'RABBITMQ_DEFAULT_PASS=p@ssw0rd'
+    networks:
+      - devops
+  # eureka:
+  #   image: springcloud/eureka
+  #   container_name: eureka
+  #   ports:
+  #     - "8761:8761"
+  #   networks:
+  #     - devops
+  #   environment:
+  #     - EUREKA_INSTANCE_PREFERIPADDRESS=true
+
+networks:
+  devops:
+    external: true
