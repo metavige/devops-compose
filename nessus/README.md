@@ -1,0 +1,2 @@
+- 自行將 ACTIVATION_CODE 放在 `.env` 檔案內，就可以載入給 docker-compose.yml 使用
+- 建立 `certs` 目錄，產生憑證，分別命名為 `servercert.pem` 以及 `serverkey.pem` (參考 nessus 文件)

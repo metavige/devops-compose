@@ -9,3 +9,5 @@ sonarqube/data
 traefik/certs/traefik.crt
 traefik/certs/traefik.key
 traefik/conf/pilot.yml
+
+.env
