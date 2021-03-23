@@ -2,19 +2,19 @@ version: "3"
 services:
   rabbitmq:
     image: rabbitmq:3.8-management-alpine
-    ports:
-    - "5672:5672"
+    # ports:
+    # - "5672:5672"
     container_name: rabbitmq
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.rabbitmq.tls=true'
-      - 'traefik.http.routers.rabbitmq.rule=Host(`rabbitmq.docker.internal`)'
-      - 'traefik.http.routers.rabbitmq.entrypoints=websecure'
-      - 'traefik.http.services.rabbitmq.loadbalancer.server.port=15672'
-      - 'traefik.docker.network=devops'
-    environment:
-      - 'RABBITMQ_DEFAULT_USER=guest'
-      - 'RABBITMQ_DEFAULT_PASS=p@ssw0rd'
+    # labels:
+    #   - 'traefik.enable=true'
+    #   - 'traefik.http.routers.rabbitmq.tls=true'
+    #   - 'traefik.http.routers.rabbitmq.rule=Host(`rabbitmq.docker.internal`)'
+    #   - 'traefik.http.routers.rabbitmq.entrypoints=websecure'
+    #   - 'traefik.http.services.rabbitmq.loadbalancer.server.port=15672'
+    #   - 'traefik.docker.network=devops'
+    # environment:
+    #   - 'RABBITMQ_DEFAULT_USER=guest'
+    #   - 'RABBITMQ_DEFAULT_PASS=p@ssw0rd'
     networks:
       - devops
   # eureka:
