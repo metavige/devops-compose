@@ -1,0 +1,12 @@
+version: '3'
+services: 
+  dns:
+    image: jpillora/dnsmasq
+    ports:
+      - 53:53/udp
+      - 5300:8080
+    volumes: 
+      - ${PWD}/dnsmasq.conf:/etc/dnsmasq.conf
+    environment: 
+      - "HTTP_USER=foo"
+      - "HTTP_PASS=bar"
