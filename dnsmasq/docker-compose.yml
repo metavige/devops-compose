@@ -4,9 +4,21 @@ services:
     image: jpillora/dnsmasq
     ports:
       - 53:53/udp
-      - 5300:8080
     volumes: 
       - ${PWD}/dnsmasq.conf:/etc/dnsmasq.conf
     environment: 
       - "HTTP_USER=foo"
       - "HTTP_PASS=bar"
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.dnsmasq.tls=true'
+      - 'traefik.http.routers.dnsmasq.rule=HostRegexp(`dnsmasq.docker.internal`)'
+      - 'traefik.http.routers.dnsmasq.entrypoints=websecure'
+      - 'traefik.http.services.dnsmasq-service.loadbalancer.server.port=8080'
+      - 'traefik.docker.network=devops'
+    networks:
+      - devops
+networks:
+  devops:
+    external: true
+      
