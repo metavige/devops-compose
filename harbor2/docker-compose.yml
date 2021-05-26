@@ -276,6 +276,37 @@ services:
       - 'traefik.http.routers.harbor.entrypoints=websecure'
       - 'traefik.http.services.harbor.loadbalancer.server.port=8080'
       - 'traefik.docker.network=devops'
+  trivy-adapter:
+    container_name: trivy-adapter
+    image: goharbor/trivy-adapter-photon:v2.2.2
+    restart: always
+    cap_drop:
+      - ALL
+    dns_search: .
+    depends_on:
+      - log
+      - redis
+    networks:
+      - devops
+    volumes:
+      - type: bind
+        source: ./harbor-data/trivy-adapter/trivy
+        target: /home/scanner/.cache/trivy
+      - type: bind
+        source: ./harbor-data/trivy-adapter/reports
+        target: /home/scanner/.cache/reports
+      - type: bind
+        source: ./common/config/shared/trust-certificates
+        target: /harbor_cust_cert
+    logging:
+      driver: "syslog"
+      options:
+        syslog-address: "tcp://127.0.0.1:1514"
+        tag: "trivy-adapter"
+    env_file:
+      ./common/config/trivy-adapter/env
+    labels:
+      - 'traefik.enable=false'
 
 networks:
   devops:

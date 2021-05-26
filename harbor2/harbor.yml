@@ -44,7 +44,7 @@ database:
   max_open_conns: 1000
 
 # The default data volume
-data_volume: ./harbor-data
+data_volume: /Volumes/RamDisk/harbor-data
 
 # Harbor Storage settings by default is using /data dir on local filesystem
 # Uncomment storage_service setting If you want to using external storage
@@ -117,7 +117,7 @@ log:
     # are all valid.
     rotate_size: 20M
     # The directory on your host that store log
-    location: ./harbor-log
+    location: /Volumes/RamDisk/harbor-log
 
   # Uncomment following lines to enable external syslog endpoint.
   # external_endpoint:
