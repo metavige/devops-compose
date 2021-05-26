@@ -1,0 +1,17 @@
+SCANNER_LOG_LEVEL=info
+SCANNER_REDIS_URL=redis://redis:6379/5?idle_timeout_seconds=30
+SCANNER_STORE_REDIS_URL=redis://redis:6379/5?idle_timeout_seconds=30
+SCANNER_STORE_REDIS_NAMESPACE=harbor.scanner.trivy:store
+SCANNER_JOB_QUEUE_REDIS_URL=redis://redis:6379/5?idle_timeout_seconds=30
+SCANNER_JOB_QUEUE_REDIS_NAMESPACE=harbor.scanner.trivy:job-queue
+SCANNER_TRIVY_CACHE_DIR=/home/scanner/.cache/trivy
+SCANNER_TRIVY_REPORTS_DIR=/home/scanner/.cache/reports
+SCANNER_TRIVY_VULN_TYPE=os,library
+SCANNER_TRIVY_SEVERITY=UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
+SCANNER_TRIVY_IGNORE_UNFIXED=False
+SCANNER_TRIVY_SKIP_UPDATE=False
+SCANNER_TRIVY_GITHUB_TOKEN=
+SCANNER_TRIVY_INSECURE=False
+HTTP_PROXY=
+HTTPS_PROXY=
+NO_PROXY=chartmuseum,notary-signer,log,postgresql,exporter,redis,localhost,registry,.local,nginx,jobservice,.internal,notary-server,registryctl,db,trivy-adapter,portal,127.0.0.1,core
