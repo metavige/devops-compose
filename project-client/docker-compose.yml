@@ -1,0 +1,22 @@
+version: '3'
+services:
+  project-client:
+    image: registry.jetbrains.team/p/prj/containers/projector-idea-c
+    # volumes:
+    #   - idea-project:/home/projector-user
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.project-client.tls=true'
+      - 'traefik.http.routers.project-client.rule=Host(`project-client.docker.internal`)'
+      - 'traefik.http.routers.project-client.entrypoints=websecure'
+      - 'traefik.http.services.project-client.loadbalancer.server.port=8887'
+      - 'traefik.docker.network=devops'
+    networks:
+      - devops
+
+# volumes:
+#   idea-project: {}
+
+networks:
+  devops:
+    external: true
