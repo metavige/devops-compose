@@ -80,7 +80,7 @@ services:
         target: /harbor_cust_cert
     networks:
       - devops
-    dns_search: .
+    # dns_search: .
     depends_on:
       - log
     logging:
@@ -88,8 +88,8 @@ services:
       options:
         syslog-address: "tcp://127.0.0.1:1514"
         tag: "registryctl"
-    # labels:
-    #   - 'traefik.enable=false'
+    labels:
+      - 'traefik.enable=false'
   postgresql:
     image: goharbor/harbor-db:v2.2.2
     container_name: harbor-db
@@ -146,7 +146,6 @@ services:
         target: /harbor_cust_cert
     networks:
       - devops
-    # dns_search: .
     depends_on:
       - log
       - registry
@@ -260,9 +259,6 @@ services:
         target: /harbor_cust_cert
     networks:
       - devops
-    # dns_search: .
-    # ports:
-    #   - 80:8080
     depends_on:
       - registry
       - core
@@ -280,6 +276,7 @@ services:
       - 'traefik.http.routers.harbor.entrypoints=websecure'
       - 'traefik.http.services.harbor.loadbalancer.server.port=8080'
       - 'traefik.docker.network=devops'
+
 networks:
   devops:
-    external: false
+    external: true

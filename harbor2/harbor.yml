@@ -2,7 +2,7 @@
 
 # The IP address or hostname to access admin UI and registry service.
 # DO NOT use localhost or 127.0.0.1, because Harbor needs to be accessed by external clients.
-hostname: harbor.docker.internal
+hostname: harbor
 
 # http related config
 http:
@@ -26,7 +26,7 @@ http:
 
 # Uncomment external_url if you want to enable external proxy
 # And when it enabled the hostname will no longer used
-external_url: https://harbor.docker.internal
+# external_url: https://harbor.docker.internal
 
 # The initial password of Harbor admin
 # It only works in first time to install harbor
@@ -44,7 +44,7 @@ database:
   max_open_conns: 1000
 
 # The default data volume
-data_volume: /Volumes/RamDisk/harbor-data
+data_volume: ./harbor-data
 
 # Harbor Storage settings by default is using /data dir on local filesystem
 # Uncomment storage_service setting If you want to using external storage
@@ -117,7 +117,7 @@ log:
     # are all valid.
     rotate_size: 20M
     # The directory on your host that store log
-    location: /var/log/harbor
+    location: ./harbor-log
 
   # Uncomment following lines to enable external syslog endpoint.
   # external_endpoint:
