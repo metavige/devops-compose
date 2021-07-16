@@ -1,7 +1,7 @@
 version: '3'
 services:
   keycloak:
-    image: jboss/keycloak:12.0.4
+    image: jboss/keycloak:14.0.0
     environment:
       - 'KEYCLOAK_USER=keycloak'
       - 'KEYCLOAK_PASSWORD=keycloak'
