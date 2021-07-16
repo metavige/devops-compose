@@ -1,0 +1,22 @@
+version: '3'
+services:
+  # reference https://hub.docker.com/r/itsthenetwork/nfs-server-alpine
+  nfs:
+    image: itsthenetwork/nfs-server-alpine:12
+    environment:
+      - SHARED_DIRECTORY=/nfsshare
+      # - READ_ONLY=
+      # - PERMITTED=172.0.0.*
+      # - SYNC=async
+    cap_add:
+      - SYS_ADMIN
+      - SETPCAP
+    volumes:
+      - nfsshare:/nfsshare
+
+volumes:
+  nfsshare: {}
+
+networks:
+  devops:
+    external: true
