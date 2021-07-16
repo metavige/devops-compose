@@ -3,15 +3,15 @@ services:
   nexus3:
     # restart: always
     image: sonatype/nexus3:latest
-    environment:
-      INSTALL4J_ADD_VM_PARAMS: -Xms2g -Xmx2g -XX:MaxDirectMemorySize=3g
+    # environment:
+    #   INSTALL4J_ADD_VM_PARAMS: -Xms2g -Xmx2g -XX:MaxDirectMemorySize=3g
     volumes:
       - nexus-data:/nexus-data
       - nexus-blob:/nexus-data/blobs
     networks:
       - devops
   nginx:
-    image: nginx
+    image: nginx:stable
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     labels:
