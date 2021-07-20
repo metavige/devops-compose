@@ -1,0 +1,30 @@
+version: '3'
+services:
+  jenkins:
+    image: jenkins/jenkins:lts-jdk11
+    user: root
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      # add docker cloud support
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    networks:
+      - devops
+    privileged: true
+    # ports:
+    # - 8080:8080
+    # - 50000:50000
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.jenkins.tls=true'
+      - 'traefik.http.routers.jenkins.rule=Host(`jenkins.docker.internal`)'
+      - 'traefik.http.routers.jenkins.entrypoints=websecure'
+      - 'traefik.http.services.jenkins.loadbalancer.server.port=8080'
+      - 'traefik.docker.network=devops'
+
+volumes:
+  jenkins_home: {}
+
+networks:
+  devops:
+    external: true
