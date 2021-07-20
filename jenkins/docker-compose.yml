@@ -1,7 +1,7 @@
 version: '3'
 services:
   jenkins:
-    image: jenkins/jenkins:lts-jdk11
+    image: jenkinsci/blueocean:latest
     user: root
     volumes:
       - jenkins_home:/var/jenkins_home
@@ -21,6 +21,8 @@ services:
       - 'traefik.http.routers.jenkins.entrypoints=websecure'
       - 'traefik.http.services.jenkins.loadbalancer.server.port=8080'
       - 'traefik.docker.network=devops'
+    extra_hosts:
+      - 'nexus.docker.internal:172.18.0.1'
 
 volumes:
   jenkins_home: {}

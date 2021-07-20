@@ -2,7 +2,7 @@ version: '3'
 
 services:
   traefik:
-    restart: always
+    # restart: always
     image: 'traefik:2.4'
     hostname: traefik-devops
     command:
