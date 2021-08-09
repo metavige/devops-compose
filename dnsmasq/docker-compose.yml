@@ -16,8 +16,8 @@ services:
       - 'traefik.http.routers.dnsmasq.entrypoints=websecure'
       - 'traefik.http.services.dnsmasq-service.loadbalancer.server.port=8080'
       - 'traefik.docker.network=devops'
-    networks:
-      - devops
+
 networks:
-  devops:
-    external: true
+  default:
+    external:
+      name: $DEFAULT_NETWORK

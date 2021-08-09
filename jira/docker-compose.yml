@@ -11,12 +11,11 @@ services:
       - 'traefik.http.routers.jira.entrypoints=web'
       - 'traefik.http.services.jira.loadbalancer.server.port=8080'
       - 'traefik.docker.network=devops'
-    networks:
-      - devops
 
 volumes:
   jira_volume: {}
 
 networks:
-  devops:
-    external: true
+  default:
+    external:
+      name: devops

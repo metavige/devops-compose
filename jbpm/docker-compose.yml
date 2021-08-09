@@ -13,8 +13,7 @@ services:
       - 'traefik.docker.network=devops'
     depends_on:
       - postgres
-    networks:
-      - devops
+
   postgres:
     image: postgres:9.6
     volumes:
@@ -23,12 +22,11 @@ services:
       POSTGRES_DB: jbpm
       POSTGRES_USER: jbpm
       POSTGRES_PASSWORD: jbpm
-    networks:
-      - devops
 
 volumes:
   postgres_data:
 
 networks:
-  devops:
-    external: true
+  default:
+    external:
+      name: devops

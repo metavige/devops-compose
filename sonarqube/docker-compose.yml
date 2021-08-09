@@ -7,8 +7,7 @@ services:
     volumes:
       - ${PWD}/data:/opt/sonarqube/data
       # - ./sonarqube/extensions:/opt/sonarqube/extensions
-    networks:
-      - devops
+
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.sonarqube.tls=true'
@@ -18,5 +17,6 @@ services:
       - 'traefik.docker.network=devops'
 
 networks:
-  devops:
-    external: true 
+  default:
+    external:
+      name: devops

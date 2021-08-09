@@ -9,9 +9,7 @@ services:
       - 'traefik.tcp.services.redis.loadbalancer.server.port=6379'
       - 'traefik.docker.network=devops'
 
-    networks:
-      - devops
-
 networks:
-  devops:
-    external: true
+  default:
+    external:
+      name: devops

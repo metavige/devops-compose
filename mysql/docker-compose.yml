@@ -13,9 +13,8 @@ services:
       - 'traefik.tcp.routers.sonarqube.entrypoints.mysql.address=":3306"'
       - 'traefik.tcp.services.sonarqube.loadBalancer.services.address=mysql:3306'
       - 'traefik.docker.network=devops'
-    networks:
-      - devops
 
 networks:
-  devops:
-    external: true
+  default:
+    external:
+      name: devops

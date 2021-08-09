@@ -13,12 +13,11 @@ services:
       - 'traefik.http.routers.portainer.entrypoints=websecure'
       - 'traefik.http.services.portainer.loadbalancer.server.port=9000'
       - 'traefik.docker.network=devops'
-    networks:
-      - devops
 
 volumes:
   portainer_data: {}
 
 networks:
-  devops:
-    external: true
+  default:
+    external:
+      name: devops

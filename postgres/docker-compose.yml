@@ -8,8 +8,6 @@ services:
     environment:
       POSTGRES_USER: postgresl
       POSTGRES_PASSWORD: postgres
-    networks:
-      - devops
 
   # adminer:
   #   image: adminer
@@ -24,5 +22,6 @@ services:
   #     - devops
 
 networks:
-  devops:
-    external: true
+  default:
+    external:
+      name: devops

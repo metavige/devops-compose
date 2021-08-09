@@ -3,11 +3,11 @@ services:
   nessus:
     image: tenableofficial/nessus
     environment:
-      - "ACTIVATION_CODE=${ACTIVATION_CODE}"
-      - "USERNAME=user"
-      - "PASSWORD=user"
+      - 'ACTIVATION_CODE=${ACTIVATION_CODE}'
+      - 'USERNAME=user'
+      - 'PASSWORD=user'
       # - "AUTO_UPDATE=no"
-    hostname: "${HOSTNAME}"
+    hostname: '${HOSTNAME}'
     ports:
       - 8834:8834
     volumes:
@@ -21,9 +21,8 @@ services:
       - 'traefik.tcp.services.nessus.loadbalancer.server.port=8834'
       # - "traefik.tcp.services.nessus.loadbalancer.server.scheme=https"
       - 'traefik.docker.network=devops'
-    networks:
-      - devops
 
 networks:
-  devops:
-    external: true
+  default:
+    external:
+      name: devops

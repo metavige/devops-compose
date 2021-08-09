@@ -14,11 +14,11 @@ services:
       - 'traefik.docker.network=devops'
     volumes:
       - rancher-data:/var/lib/mysql
-    networks:
-      - devops
+
 volumes:
   rancher-data:
 
 networks:
-  devops:
-    external: true
+  default:
+    external:
+      name: devops

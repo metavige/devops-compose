@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 services:
   gitlab:
     image: gitlab/gitlab-ce:latest
@@ -18,23 +18,20 @@ services:
       - 'traefik.http.routers.gitlab.rule=Host(`gitlab.docker.internal`)'
       - 'traefik.http.routers.gitlab.entrypoints=websecure'
       - 'traefik.http.services.gitlab.loadbalancer.server.port=80'
-      - 'traefik.docker.network=devops'
+      - 'traefik.docker.network=$DEFAULT_NETWORK'
     volumes:
       - gitlab-config:/etc/gitlab
       - gitlab-data:/var/opt/gitlab
-    networks:
-      - devops
   runner:
     image: gitlab/gitlab-runner
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./runner/config:/etc/gitlab-runner
-    networks:
-      - devops
 
 networks:
-  devops:
-    external: true
+  default:
+    external:
+      name: $DEFAULT_NETWORK
 
 volumes:
   gitlab-config: {}

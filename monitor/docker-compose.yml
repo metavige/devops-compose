@@ -20,9 +20,8 @@ services:
       - 'traefik.http.routers.cadvisor.rule=hostregexp(`cadvisor.docker.internal`)'
       - 'traefik.http.services.cadvisor.loadbalancer.server.port=8080'
       - 'traefik.docker.network=devops'
-    networks:
-      - devops
 
 networks:
-  devops:
-    external: true
+  default:
+    external:
+      name: devops

@@ -11,9 +11,8 @@ services:
     ports:
       - 9990:9990
     command: /opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0
-    networks:
-      - devops
 
 networks:
-  devops:
-    external: true
+  default:
+    external:
+      name: devops

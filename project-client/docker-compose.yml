@@ -11,12 +11,11 @@ services:
       - 'traefik.http.routers.project-client.entrypoints=websecure'
       - 'traefik.http.services.project-client.loadbalancer.server.port=8887'
       - 'traefik.docker.network=devops'
-    networks:
-      - devops
 
 # volumes:
 #   idea-project: {}
 
 networks:
-  devops:
-    external: true
+  default:
+    external:
+      name: devops

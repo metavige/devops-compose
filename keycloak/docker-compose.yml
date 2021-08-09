@@ -27,8 +27,7 @@ services:
       - 'traefik.http.services.keycloak.loadbalancer.sticky.cookie.secure=true'
       - 'traefik.http.services.keycloak.loadbalancer.sticky.cookie.httpOnly=true'
       - 'traefik.docker.network=devops'
-    networks:
-      - devops
+
     depends_on:
       - postgres
   postgres:
@@ -39,12 +38,11 @@ services:
       - 'POSTGRES_DB=keycloak'
       - 'POSTGRES_USER=keycloak'
       - 'POSTGRES_PASSWORD=keycloak'
-    networks:
-      - devops
 
 volumes:
   postgres_data: {}
 
 networks:
-  devops:
-    external: true
+  default:
+    external:
+      name: devops

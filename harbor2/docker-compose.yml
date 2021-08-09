@@ -22,8 +22,6 @@ services:
         target: /etc/rsyslog.d/rsyslog_docker.conf
     ports:
       - 127.0.0.1:1514:10514
-    networks:
-      - devops
     labels:
       - 'traefik.enable=false'
   registry:
@@ -45,16 +43,14 @@ services:
       - type: bind
         source: ./common/config/shared/trust-certificates
         target: /harbor_cust_cert
-    networks:
-      - devops
     # dns_search: .
     depends_on:
       - log
     logging:
-      driver: "syslog"
+      driver: 'syslog'
       options:
-        syslog-address: "tcp://127.0.0.1:1514"
-        tag: "registry"
+        syslog-address: 'tcp://127.0.0.1:1514'
+        tag: 'registry'
     labels:
       - 'traefik.enable=false'
   registryctl:
@@ -78,16 +74,14 @@ services:
       - type: bind
         source: ./common/config/shared/trust-certificates
         target: /harbor_cust_cert
-    networks:
-      - devops
     # dns_search: .
     depends_on:
       - log
     logging:
-      driver: "syslog"
+      driver: 'syslog'
       options:
-        syslog-address: "tcp://127.0.0.1:1514"
-        tag: "registryctl"
+        syslog-address: 'tcp://127.0.0.1:1514'
+        tag: 'registryctl'
     labels:
       - 'traefik.enable=false'
   postgresql:
@@ -103,18 +97,16 @@ services:
       - SETUID
     volumes:
       - ./harbor-data/database:/var/lib/postgresql/data:z
-    networks:
-      - devops
     # dns_search: .
     env_file:
       - ./common/config/db/env
     depends_on:
       - log
     logging:
-      driver: "syslog"
+      driver: 'syslog'
       options:
-        syslog-address: "tcp://127.0.0.1:1514"
-        tag: "postgresql"
+        syslog-address: 'tcp://127.0.0.1:1514'
+        tag: 'postgresql'
     labels:
       - 'traefik.enable=false'
   core:
@@ -144,18 +136,16 @@ services:
       - type: bind
         source: ./common/config/shared/trust-certificates
         target: /harbor_cust_cert
-    networks:
-      - devops
     depends_on:
       - log
       - registry
       - redis
       - postgresql
     logging:
-      driver: "syslog"
+      driver: 'syslog'
       options:
-        syslog-address: "tcp://127.0.0.1:1514"
-        tag: "core"
+        syslog-address: 'tcp://127.0.0.1:1514'
+        tag: 'core'
     labels:
       - 'traefik.enable=false'
   portal:
@@ -173,16 +163,14 @@ services:
       - type: bind
         source: ./common/config/portal/nginx.conf
         target: /etc/nginx/nginx.conf
-    networks:
-      - devops
     dns_search: .
     depends_on:
       - log
     logging:
-      driver: "syslog"
+      driver: 'syslog'
       options:
-        syslog-address: "tcp://127.0.0.1:1514"
-        tag: "portal"
+        syslog-address: 'tcp://127.0.0.1:1514'
+        tag: 'portal'
     labels:
       - 'traefik.enable=false'
   jobservice:
@@ -205,16 +193,14 @@ services:
       - type: bind
         source: ./common/config/shared/trust-certificates
         target: /harbor_cust_cert
-    networks:
-      - devops
     # dns_search: .
     depends_on:
       - core
     logging:
-      driver: "syslog"
+      driver: 'syslog'
       options:
-        syslog-address: "tcp://127.0.0.1:1514"
-        tag: "jobservice"
+        syslog-address: 'tcp://127.0.0.1:1514'
+        tag: 'jobservice'
     labels:
       - 'traefik.enable=false'
   redis:
@@ -229,16 +215,14 @@ services:
       - SETUID
     volumes:
       - ./harbor-data/redis:/var/lib/redis
-    networks:
-      - devops
     # dns_search: .
     depends_on:
       - log
     logging:
-      driver: "syslog"
+      driver: 'syslog'
       options:
-        syslog-address: "tcp://127.0.0.1:1514"
-        tag: "redis"
+        syslog-address: 'tcp://127.0.0.1:1514'
+        tag: 'redis'
     labels:
       - 'traefik.enable=false'
   proxy:
@@ -257,18 +241,16 @@ services:
       - type: bind
         source: ./common/config/shared/trust-certificates
         target: /harbor_cust_cert
-    networks:
-      - devops
     depends_on:
       - registry
       - core
       - portal
       - log
     logging:
-      driver: "syslog"
+      driver: 'syslog'
       options:
-        syslog-address: "tcp://127.0.0.1:1514"
-        tag: "proxy"
+        syslog-address: 'tcp://127.0.0.1:1514'
+        tag: 'proxy'
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.harbor.tls=true'
@@ -286,8 +268,6 @@ services:
     depends_on:
       - log
       - redis
-    networks:
-      - devops
     volumes:
       - type: bind
         source: ./harbor-data/trivy-adapter/trivy
@@ -299,15 +279,15 @@ services:
         source: ./common/config/shared/trust-certificates
         target: /harbor_cust_cert
     logging:
-      driver: "syslog"
+      driver: 'syslog'
       options:
-        syslog-address: "tcp://127.0.0.1:1514"
-        tag: "trivy-adapter"
-    env_file:
-      ./common/config/trivy-adapter/env
+        syslog-address: 'tcp://127.0.0.1:1514'
+        tag: 'trivy-adapter'
+    env_file: ./common/config/trivy-adapter/env
     labels:
       - 'traefik.enable=false'
 
 networks:
-  devops:
-    external: true
+  default:
+    external:
+      name: $DEFAULT_NETWORK

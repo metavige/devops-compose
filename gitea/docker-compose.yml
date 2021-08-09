@@ -13,8 +13,6 @@ services:
       - USER_UID=1000
       - USER_GID=1000
     # restart: always 
-    networks:
-      - devops
     volumes:
       - gitea-data:/data
       - /etc/timezone:/etc/timezone:ro
@@ -30,8 +28,9 @@ services:
       - "9922:22"
 
 networks:
-  devops:
-    external: true
+  default:
+    external:
+      name: devops
 
 volumes:
   gitea-data: {}

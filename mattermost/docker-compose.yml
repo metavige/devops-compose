@@ -8,9 +8,8 @@ services:
       - dockerhost:127.0.0.1
     environment:
       - 'MM_Default_Server_Locale:zh_TW'
-    networks:
-      - devops
 
 networks:
-  devops:
-    external: true
+  default:
+    external:
+      name: devops

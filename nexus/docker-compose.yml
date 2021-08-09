@@ -9,8 +9,7 @@ services:
     volumes:
       - nexus-data:/nexus-data
       - nexus-blob:/nexus-data/blobs
-    networks:
-      - devops
+
   nginx:
     image: nginx:stable
     volumes:
@@ -22,12 +21,11 @@ services:
       - 'traefik.http.routers.nexus.entrypoints=websecure'
       - 'traefik.http.services.nexus.loadbalancer.server.port=8080'
       - 'traefik.docker.network=devops'
-    networks:
-      - devops
 
 networks:
-  devops:
-    external: true
+  default:
+    external:
+      name: devops
 
 volumes:
   nexus-data: {}

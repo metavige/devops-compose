@@ -39,8 +39,6 @@ services:
       - '${PWD}/certs:/certs'
       - '${PWD}/conf:/etc/traefik/dynamic_conf:ro'
       - '${PWD}/logs:/var/log/traefik'
-    networks:
-      - devops
   # whoami:
   #   image: traefik/whoami
   #   labels:
@@ -49,9 +47,8 @@ services:
   #     - 'traefik.http.routers.whoami.tls=true'
   #     - 'traefik.http.routers.whoami.rule=hostregexp(`whoami.docker.internal`)'
   #     - 'traefik.docker.network=devops'
-  #   networks:
-  #     - devops
 
 networks:
-  devops:
-    external: true
+  default:
+    external:
+      name: $DEFAULT_NETWORK

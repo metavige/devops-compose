@@ -9,8 +9,7 @@ services:
       # add docker cloud support
       - '/etc/localtime:/etc/localtime:ro'
       - '/var/run/docker.sock:/var/run/docker.sock'
-    networks:
-      - devops
+
     privileged: true
     # ports:
     # - 8080:8080
@@ -29,5 +28,6 @@ volumes:
   jenkins_home: {}
 
 networks:
-  devops:
-    external: true
+  default:
+    external:
+      name: devops
