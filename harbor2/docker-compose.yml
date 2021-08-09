@@ -252,12 +252,11 @@ services:
         syslog-address: 'tcp://127.0.0.1:1514'
         tag: 'proxy'
     labels:
-      - 'traefik.enable=true'
       - 'traefik.http.routers.harbor.tls=true'
       - 'traefik.http.routers.harbor.rule=HostRegexp(`harbor.docker.internal`)'
       - 'traefik.http.routers.harbor.entrypoints=websecure'
       - 'traefik.http.services.harbor.loadbalancer.server.port=8080'
-      - 'traefik.docker.network=devops'
+
   trivy-adapter:
     container_name: trivy-adapter
     image: goharbor/trivy-adapter-photon:v2.2.2
@@ -289,5 +288,5 @@ services:
 
 networks:
   default:
-    external:
-      name: $DEFAULT_NETWORK
+    external: true
+    name: devops

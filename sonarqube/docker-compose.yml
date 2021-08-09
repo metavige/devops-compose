@@ -9,14 +9,12 @@ services:
       # - ./sonarqube/extensions:/opt/sonarqube/extensions
 
     labels:
-      - 'traefik.enable=true'
       - 'traefik.http.routers.sonarqube.tls=true'
       - 'traefik.http.routers.sonarqube.rule=Host(`sonarqube.docker.internal`)'
       - 'traefik.http.routers.sonarqube.entrypoints=websecure'
       - 'traefik.http.services.sonarqube.loadbalancer.server.port=9000'
-      - 'traefik.docker.network=devops'
 
 networks:
   default:
-    external:
-      name: devops
+    external: true
+    name: devops

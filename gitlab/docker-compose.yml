@@ -13,12 +13,10 @@ services:
       - source: gitlab
         target: /omnibus_config.rb
     labels:
-      - 'traefik.enable=true'
       - 'traefik.http.routers.gitlab.tls=true'
       - 'traefik.http.routers.gitlab.rule=Host(`gitlab.docker.internal`)'
       - 'traefik.http.routers.gitlab.entrypoints=websecure'
       - 'traefik.http.services.gitlab.loadbalancer.server.port=80'
-      - 'traefik.docker.network=$DEFAULT_NETWORK'
     volumes:
       - gitlab-config:/etc/gitlab
       - gitlab-data:/var/opt/gitlab
@@ -30,8 +28,8 @@ services:
 
 networks:
   default:
-    external:
-      name: $DEFAULT_NETWORK
+    external: true
+    name: devops
 
 volumes:
   gitlab-config: {}

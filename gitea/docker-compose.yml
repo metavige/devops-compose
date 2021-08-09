@@ -18,19 +18,19 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     labels: 
-      - 'traefik.enable=true'
+
       - 'traefik.http.routers.gitea.tls=true'
       - 'traefik.http.routers.gitea.rule=Host(`gitea.docker.internal`)'
       - 'traefik.http.routers.gitea.entrypoints=websecure'
       - 'traefik.http.services.gitea.loadbalancer.server.port=3000'
-      - 'traefik.docker.network=devops'
+
     ports:
       - "9922:22"
 
 networks:
   default:
-    external:
-      name: devops
+    external: true
+    name: devops
 
 volumes:
   gitea-data: {}

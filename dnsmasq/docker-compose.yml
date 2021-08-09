@@ -10,14 +10,12 @@ services:
       - 'HTTP_USER=foo'
       - 'HTTP_PASS=bar'
     labels:
-      - 'traefik.enable=true'
       - 'traefik.http.routers.dnsmasq.tls=true'
       - 'traefik.http.routers.dnsmasq.rule=HostRegexp(`dnsmasq.docker.internal`)'
       - 'traefik.http.routers.dnsmasq.entrypoints=websecure'
       - 'traefik.http.services.dnsmasq-service.loadbalancer.server.port=8080'
-      - 'traefik.docker.network=devops'
 
 networks:
   default:
-    external:
-      name: $DEFAULT_NETWORK
+    external: true
+    name: devops

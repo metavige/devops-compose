@@ -13,16 +13,14 @@ services:
     volumes:
       - ${PWD}/certs:/opt/nessus/com/nessus/CA
     labels:
-      - 'traefik.enable=true'
       - 'traefik.tcp.routers.nessus.tls=true'
       - 'traefik.tcp.routers.nessus.rule=HostSNI(`${HOSTNAME}`)'
       - 'traefik.tcp.routers.nessus.entrypoints=websecure'
       - 'traefik.tcp.routers.nessus.tls.passthrough=true'
       - 'traefik.tcp.services.nessus.loadbalancer.server.port=8834'
       # - "traefik.tcp.services.nessus.loadbalancer.server.scheme=https"
-      - 'traefik.docker.network=devops'
 
 networks:
   default:
-    external:
-      name: devops
+    external: true
+    name: devops

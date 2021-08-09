@@ -14,14 +14,12 @@ services:
     devices:
       - /dev/kmsg
     labels:
-      - 'traefik.enable=true'
       - 'traefik.http.routers.cadvisor.entrypoints=websecure'
       - 'traefik.http.routers.cadvisor.tls=true'
       - 'traefik.http.routers.cadvisor.rule=hostregexp(`cadvisor.docker.internal`)'
       - 'traefik.http.services.cadvisor.loadbalancer.server.port=8080'
-      - 'traefik.docker.network=devops'
 
 networks:
   default:
-    external:
-      name: devops
+    external: true
+    name: devops

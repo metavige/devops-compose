@@ -6,8 +6,6 @@ services:
     # - "5672:5672"
     container_name: rabbitmq
     labels:
-      - 'traefik.enable=true'
-      - 'traefik.docker.network=devops'
       # web browser access to RabbitMQ management GUI
       - 'traefik.http.routers.rabbitmq-mgr.tls=true'
       - 'traefik.http.routers.rabbitmq-mgr.rule=Host(`rabbitmq-management.docker.internal`)'
@@ -30,5 +28,5 @@ volumes:
 
 networks:
   default:
-    external:
-      name: devops
+    external: true
+    name: devops

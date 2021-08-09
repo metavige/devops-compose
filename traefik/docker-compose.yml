@@ -16,7 +16,6 @@ services:
       - '--api.dashboard=true'
       - '--providers.file.directory=/etc/traefik/dynamic_conf'
     labels:
-      - 'traefik.enable=true'
       - 'traefik.http.routers.traefik.tls=true'
       - 'traefik.http.routers.traefik.rule=HostRegexp(`traefik.docker.internal`)'
       - 'traefik.http.routers.traefik.entrypoints=websecure'
@@ -39,16 +38,14 @@ services:
       - '${PWD}/certs:/certs'
       - '${PWD}/conf:/etc/traefik/dynamic_conf:ro'
       - '${PWD}/logs:/var/log/traefik'
-  # whoami:
-  #   image: traefik/whoami
-  #   labels:
-  #     - 'traefik.enable=true'
-  #     - 'traefik.http.routers.whoami.entrypoints=websecure'
-  #     - 'traefik.http.routers.whoami.tls=true'
-  #     - 'traefik.http.routers.whoami.rule=hostregexp(`whoami.docker.internal`)'
-  #     - 'traefik.docker.network=devops'
+  whoami:
+    image: traefik/whoami
+    labels:
+      - 'traefik.http.routers.whoami.entrypoints=websecure'
+      - 'traefik.http.routers.whoami.tls=true'
+      - 'traefik.http.routers.whoami.rule=hostregexp(`whoami.docker.internal`)'
 
 networks:
   default:
-    external:
-      name: $DEFAULT_NETWORK
+    external: true
+    name: devops

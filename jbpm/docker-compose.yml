@@ -6,11 +6,10 @@ services:
       JBPM_DB_DRIVER: postgres
       JBPM_DB_HOST: postgres
     labels:
-      - 'traefik.enable=true'
       - 'traefik.http.routers.jbpm.rule=Host(`jbpm.docker.internal`)'
       - 'traefik.http.routers.jbpm.entrypoints=web'
       - 'traefik.http.services.jbpm.loadbalancer.server.port=8080'
-      - 'traefik.docker.network=devops'
+
     depends_on:
       - postgres
 
@@ -28,5 +27,5 @@ volumes:
 
 networks:
   default:
-    external:
-      name: devops
+    external: true
+    name: devops

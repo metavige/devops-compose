@@ -7,17 +7,15 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - portainer_data:/data
     labels:
-      - 'traefik.enable=true'
       - 'traefik.http.routers.portainer.tls=true'
       - 'traefik.http.routers.portainer.rule=HostRegexp(`portainer.docker.internal`)'
       - 'traefik.http.routers.portainer.entrypoints=websecure'
       - 'traefik.http.services.portainer.loadbalancer.server.port=9000'
-      - 'traefik.docker.network=devops'
 
 volumes:
   portainer_data: {}
 
 networks:
   default:
-    external:
-      name: devops
+    external: true
+    name: devops

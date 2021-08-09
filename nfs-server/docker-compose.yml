@@ -19,5 +19,5 @@ volumes:
 
 networks:
   default:
-    external:
-      name: devops
+    external: true
+    name: devops
