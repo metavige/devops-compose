@@ -13,13 +13,15 @@ services:
       - '--entrypoints.web.address=:80'
       - '--entrypoints.websecure.address=:443'
       - '--api.insecure=true'
+      - '--api.dashboard=true'
       - '--providers.file.directory=/etc/traefik/dynamic_conf'
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.traefik.tls=true'
       - 'traefik.http.routers.traefik.rule=HostRegexp(`traefik.docker.internal`)'
       - 'traefik.http.routers.traefik.entrypoints=websecure'
-      - 'traefik.http.services.traefik.loadbalancer.server.port=8080'
+      - 'traefik.http.routers.traefik.service=api@internal'
+      # - 'traefik.http.services.traefik.loadbalancer.server.port=8080'
       # middleware redirect
       - 'traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https'
       # global redirect to https

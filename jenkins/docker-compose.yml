@@ -2,6 +2,7 @@ version: '3'
 services:
   jenkins:
     image: jenkinsci/blueocean:latest
+    hostname: jenkins.docker.internal
     user: root
     volumes:
       - jenkins_home:/var/jenkins_home

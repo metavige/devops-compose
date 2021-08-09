@@ -3,21 +3,24 @@ services:
   gitlab:
     image: gitlab/gitlab-ce:latest
     hostname: gitlab.docker.internal
-    # ports:
-    # - '80:80'
-    # - '8443:443'
-    # - '8822:22'
+    ports:
+      # - '80:80'
+      # - '8443:443'
+      - '8822:22'
     environment:
-      - 'EXTERNAL_URL=https://gitlab.docker.internal/'
+      GITLAB_OMNIBUS_CONFIG: "from_file('/omnibus_config.rb')"
+    configs:
+      - source: gitlab
+        target: /omnibus_config.rb
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.gitlab.tls=true'
-      - 'traefik.http.routers.gitlab.rule=HostRegexp(`gitlab.docker.internal`)'
+      - 'traefik.http.routers.gitlab.rule=Host(`gitlab.docker.internal`)'
       - 'traefik.http.routers.gitlab.entrypoints=websecure'
       - 'traefik.http.services.gitlab.loadbalancer.server.port=80'
       - 'traefik.docker.network=devops'
     volumes:
-      - gitlab-config:/etc/gitlab 
+      - gitlab-config:/etc/gitlab
       - gitlab-data:/var/opt/gitlab
     networks:
       - devops
@@ -34,5 +37,9 @@ networks:
     external: true
 
 volumes:
-  gitlab-config: {} 
+  gitlab-config: {}
   gitlab-data: {}
+
+configs:
+  gitlab:
+    file: ./gitlab.rb

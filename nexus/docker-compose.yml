@@ -3,6 +3,7 @@ services:
   nexus3:
     # restart: always
     image: sonatype/nexus3:latest
+    hostname: nexus.docker.internal
     # environment:
     #   INSTALL4J_ADD_VM_PARAMS: -Xms2g -Xmx2g -XX:MaxDirectMemorySize=3g
     volumes:

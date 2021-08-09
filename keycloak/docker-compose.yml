@@ -2,6 +2,7 @@ version: '3'
 services:
   keycloak:
     image: jboss/keycloak:14.0.0
+    hostname: keycloak.docker.internal
     environment:
       - 'KEYCLOAK_USER=keycloak'
       - 'KEYCLOAK_PASSWORD=keycloak'

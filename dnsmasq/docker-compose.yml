@@ -1,14 +1,14 @@
 version: '3'
-services: 
+services:
   dns:
     image: jpillora/dnsmasq
-    ports:
-      - 53:53/udp
-    volumes: 
+    # ports:
+    #   - 53:53/udp
+    volumes:
       - ${PWD}/dnsmasq.conf:/etc/dnsmasq.conf
-    environment: 
-      - "HTTP_USER=foo"
-      - "HTTP_PASS=bar"
+    environment:
+      - 'HTTP_USER=foo'
+      - 'HTTP_PASS=bar'
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.dnsmasq.tls=true'
@@ -21,4 +21,3 @@ services:
 networks:
   devops:
     external: true
-      
