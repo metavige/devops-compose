@@ -8,14 +8,9 @@ services:
       - portainer_data:/data
     labels:
       - 'traefik.http.routers.portainer.tls=true'
-      - 'traefik.http.routers.portainer.rule=HostRegexp(`portainer.docker.internal`)'
+      - 'traefik.http.routers.portainer.rule=HostRegexp(`portainer.$MY_DOMAIN`)'
       - 'traefik.http.routers.portainer.entrypoints=websecure'
       - 'traefik.http.services.portainer.loadbalancer.server.port=9000'
 
 volumes:
   portainer_data: {}
-
-networks:
-  default:
-    external: true
-    name: devops

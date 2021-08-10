@@ -19,8 +19,3 @@ services:
       - 'traefik.tcp.routers.nessus.tls.passthrough=true'
       - 'traefik.tcp.services.nessus.loadbalancer.server.port=8834'
       # - "traefik.tcp.services.nessus.loadbalancer.server.scheme=https"
-
-networks:
-  default:
-    external: true
-    name: devops

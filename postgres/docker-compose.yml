@@ -13,15 +13,10 @@ services:
   #   image: adminer
   #   labels:
   #     - 'traefik.enable=true'
-  #     - 'traefik.http.routers.nexus.rule=Host(`adminer.docker.internal`)'
+  #     - 'traefik.http.routers.nexus.rule=Host(`adminer.$MY_DOMAIN`)'
   #     - 'traefik.http.routers.nexus.entrypoints=web'
   #     - 'traefik.docker.network=devops'
   #   # ports:
   #   #   - 8080:8080
   #   networks:
   #     - devops
-
-networks:
-  default:
-    external: true
-    name: devops

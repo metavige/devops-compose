@@ -8,7 +8,7 @@ if [ -d $1 ]
 then
   docker compose --env-file=$DOT_ENV \
     -f $BASE_NETWORK_YAML \
-    -f $COMPOSE_FILE stop
+    -f $COMPOSE_FILE config
 else
   echo "$1 not existed!"
 fi

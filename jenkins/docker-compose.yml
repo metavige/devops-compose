@@ -15,14 +15,9 @@ services:
     # - 50000:50000
     labels:
       - 'traefik.http.routers.jenkins.tls=true'
-      - 'traefik.http.routers.jenkins.rule=Host(`jenkins.docker.internal`)'
+      - 'traefik.http.routers.jenkins.rule=Host(`jenkins.$MY_DOMAIN`)'
       - 'traefik.http.routers.jenkins.entrypoints=websecure'
       - 'traefik.http.services.jenkins.loadbalancer.server.port=8080'
 
 volumes:
   jenkins_home: {}
-
-networks:
-  default:
-    external: true
-    name: devops

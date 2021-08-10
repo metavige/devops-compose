@@ -1,8 +1,4 @@
-version: "3"
-
-networks:
-  gitea:
-    external: false
+version: '3'
 
 services:
   server:
@@ -12,25 +8,19 @@ services:
     environment:
       - USER_UID=1000
       - USER_GID=1000
-    # restart: always 
+    # restart: always
     volumes:
       - gitea-data:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    labels: 
-
+    labels:
       - 'traefik.http.routers.gitea.tls=true'
-      - 'traefik.http.routers.gitea.rule=Host(`gitea.docker.internal`)'
+      - 'traefik.http.routers.gitea.rule=Host(`gitea.$MY_DOMAIN`)'
       - 'traefik.http.routers.gitea.entrypoints=websecure'
       - 'traefik.http.services.gitea.loadbalancer.server.port=3000'
 
     ports:
-      - "9922:22"
-
-networks:
-  default:
-    external: true
-    name: devops
+      - '9922:22'
 
 volumes:
   gitea-data: {}

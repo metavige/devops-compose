@@ -3,15 +3,10 @@ services:
   server:
     image: jboss/wildfly
     labels:
-      - 'traefik.http.routers.wildfly.rule=Host(`wildfly.docker.internal`)'
+      - 'traefik.http.routers.wildfly.rule=Host(`wildfly.$MY_DOMAIN`)'
       - 'traefik.http.routers.wildfly.entrypoints=web'
       - 'traefik.http.services.wildfly.loadbalancer.server.port=8080'
 
     ports:
       - 9990:9990
     command: /opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0
-
-networks:
-  default:
-    external: true
-    name: devops

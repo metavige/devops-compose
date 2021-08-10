@@ -17,7 +17,7 @@ services:
       - '--providers.file.directory=/etc/traefik/dynamic_conf'
     labels:
       - 'traefik.http.routers.traefik.tls=true'
-      - 'traefik.http.routers.traefik.rule=HostRegexp(`traefik.docker.internal`)'
+      - 'traefik.http.routers.traefik.rule=HostRegexp(`traefik.$MY_DOMAIN`)'
       - 'traefik.http.routers.traefik.entrypoints=websecure'
       - 'traefik.http.routers.traefik.service=api@internal'
       # - 'traefik.http.services.traefik.loadbalancer.server.port=8080'
@@ -43,9 +43,8 @@ services:
     labels:
       - 'traefik.http.routers.whoami.entrypoints=websecure'
       - 'traefik.http.routers.whoami.tls=true'
-      - 'traefik.http.routers.whoami.rule=hostregexp(`whoami.docker.internal`)'
-
-networks:
-  default:
-    external: true
-    name: devops
+      - 'traefik.http.routers.whoami.rule=hostregexp(`whoami.$MY_DOMAIN`)'
+# networks:
+#   default:
+#     external: true
+#     name: devops

@@ -16,10 +16,5 @@ services:
     labels:
       - 'traefik.http.routers.cadvisor.entrypoints=websecure'
       - 'traefik.http.routers.cadvisor.tls=true'
-      - 'traefik.http.routers.cadvisor.rule=hostregexp(`cadvisor.docker.internal`)'
+      - 'traefik.http.routers.cadvisor.rule=hostregexp(`cadvisor.$MY_DOMAIN`)'
       - 'traefik.http.services.cadvisor.loadbalancer.server.port=8080'
-
-networks:
-  default:
-    external: true
-    name: devops

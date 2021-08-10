@@ -6,14 +6,9 @@ services:
     #   - idea-project:/home/projector-user
     labels:
       - 'traefik.http.routers.project-client.tls=true'
-      - 'traefik.http.routers.project-client.rule=Host(`project-client.docker.internal`)'
+      - 'traefik.http.routers.project-client.rule=Host(`project-client.$MY_DOMAIN`)'
       - 'traefik.http.routers.project-client.entrypoints=websecure'
       - 'traefik.http.services.project-client.loadbalancer.server.port=8887'
-
 # volumes:
 #   idea-project: {}
 
-networks:
-  default:
-    external: true
-    name: devops

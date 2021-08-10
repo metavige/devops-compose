@@ -11,11 +11,6 @@ services:
       - 'HTTP_PASS=bar'
     labels:
       - 'traefik.http.routers.dnsmasq.tls=true'
-      - 'traefik.http.routers.dnsmasq.rule=HostRegexp(`dnsmasq.docker.internal`)'
+      - 'traefik.http.routers.dnsmasq.rule=HostRegexp(`dnsmasq.$MY_DOMAIN`)'
       - 'traefik.http.routers.dnsmasq.entrypoints=websecure'
       - 'traefik.http.services.dnsmasq-service.loadbalancer.server.port=8080'
-
-networks:
-  default:
-    external: true
-    name: devops

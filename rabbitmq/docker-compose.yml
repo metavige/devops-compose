@@ -8,12 +8,12 @@ services:
     labels:
       # web browser access to RabbitMQ management GUI
       - 'traefik.http.routers.rabbitmq-mgr.tls=true'
-      - 'traefik.http.routers.rabbitmq-mgr.rule=Host(`rabbitmq-management.docker.internal`)'
+      - 'traefik.http.routers.rabbitmq-mgr.rule=Host(`rabbitmq-management.$MY_DOMAIN`)'
       - 'traefik.http.routers.rabbitmq-mgr.entrypoints=websecure'
       - 'traefik.http.services.rabbitmq-mgr.loadbalancer.server.port=15672'
       # AMQPS - SSL terminated by traefik (over 443, not 5672)
       - 'traefik.tcp.routers.rabbitmq.tls=true'
-      - 'traefik.tcp.routers.rabbitmq.rule=HostSNI(`rabbitmq.docker.internal`)'
+      - 'traefik.tcp.routers.rabbitmq.rule=HostSNI(`rabbitmq.$MY_DOMAIN`)'
       - 'traefik.tcp.routers.rabbitmq.entrypoints=websecure'
       - 'traefik.tcp.services.rabbitmq.loadbalancer.server.port=5672'
     environment:
@@ -25,8 +25,3 @@ services:
 
 volumes:
   rabbitmq: {}
-
-networks:
-  default:
-    external: true
-    name: devops

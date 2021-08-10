@@ -7,11 +7,6 @@ services:
     #ports:
     #  - 8080:8080/tcp
     labels:
-      - 'traefik.http.routers.3scale.rule=Host(`3scale.docker.internal`)'
+      - 'traefik.http.routers.3scale.rule=Host(`3scale.$MY_DOMAIN`)'
       - 'traefik.http.routers.3scale.entrypoints=web'
       - 'traefik.http.services.3scale.loadbalancer.server.port=8080'
-
-networks:
-  default:
-    external: true
-    name: devops

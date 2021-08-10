@@ -7,7 +7,7 @@ services:
       - ' --acme-domain rancher.docker.internal'
     labels:
       - 'traefik.http.routers.rancher.tls=true'
-      - 'traefik.http.routers.rancher.rule=HostRegexp(`rancher.docker.internal`)'
+      - 'traefik.http.routers.rancher.rule=HostRegexp(`rancher.$MY_DOMAIN`)'
       - 'traefik.http.routers.rancher.entrypoints=websecure'
       - 'traefik.http.services.rancher-service.loadbalancer.server.port=80'
 
@@ -16,8 +16,3 @@ services:
 
 volumes:
   rancher-data:
-
-networks:
-  default:
-    external: true
-    name: devops

@@ -16,8 +16,3 @@ services:
 
 volumes:
   nfsshare: {}
-
-networks:
-  default:
-    external: true
-    name: devops

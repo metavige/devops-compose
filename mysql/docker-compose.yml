@@ -8,11 +8,6 @@ services:
     # ports:
     #   - 3306:3306
     labels:
-      - 'traefik.tcp.routers.sonarqube.rule=Host(`mysql.docker.internal`)'
+      - 'traefik.tcp.routers.sonarqube.rule=Host(`mysql.$MY_DOMAIN`)'
       - 'traefik.tcp.routers.sonarqube.entrypoints.mysql.address=":3306"'
       - 'traefik.tcp.services.sonarqube.loadBalancer.services.address=mysql:3306'
-
-networks:
-  default:
-    external: true
-    name: devops

@@ -6,14 +6,9 @@ services:
       - jira_volume:/var/atlassian/application-data/jira
 
     labels:
-      - 'traefik.http.routers.jira.rule=Host(`jira.docker.internal`)'
+      - 'traefik.http.routers.jira.rule=Host(`jira.$MY_DOMAIN`)'
       - 'traefik.http.routers.jira.entrypoints=web'
       - 'traefik.http.services.jira.loadbalancer.server.port=8080'
 
 volumes:
   jira_volume: {}
-
-networks:
-  default:
-    external: true
-    name: devops

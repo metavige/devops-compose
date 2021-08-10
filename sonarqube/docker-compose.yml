@@ -10,11 +10,6 @@ services:
 
     labels:
       - 'traefik.http.routers.sonarqube.tls=true'
-      - 'traefik.http.routers.sonarqube.rule=Host(`sonarqube.docker.internal`)'
+      - 'traefik.http.routers.sonarqube.rule=Host(`sonarqube.$MY_DOMAIN`)'
       - 'traefik.http.routers.sonarqube.entrypoints=websecure'
       - 'traefik.http.services.sonarqube.loadbalancer.server.port=9000'
-
-networks:
-  default:
-    external: true
-    name: devops

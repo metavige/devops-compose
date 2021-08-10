@@ -253,7 +253,7 @@ services:
         tag: 'proxy'
     labels:
       - 'traefik.http.routers.harbor.tls=true'
-      - 'traefik.http.routers.harbor.rule=HostRegexp(`harbor.docker.internal`)'
+      - 'traefik.http.routers.harbor.rule=HostRegexp(`harbor.$MY_DOMAIN`)'
       - 'traefik.http.routers.harbor.entrypoints=websecure'
       - 'traefik.http.services.harbor.loadbalancer.server.port=8080'
 
@@ -285,8 +285,3 @@ services:
     env_file: ./common/config/trivy-adapter/env
     labels:
       - 'traefik.enable=false'
-
-networks:
-  default:
-    external: true
-    name: devops

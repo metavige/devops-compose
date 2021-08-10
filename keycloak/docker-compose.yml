@@ -19,7 +19,7 @@ services:
     # command: ./standard
     labels:
       - 'traefik.http.routers.keycloak.tls=true'
-      - 'traefik.http.routers.keycloak.rule=Host(`keycloak.docker.internal`)'
+      - 'traefik.http.routers.keycloak.rule=Host(`keycloak.$MY_DOMAIN`)'
       - 'traefik.http.routers.keycloak.entrypoints=websecure'
       - 'traefik.http.services.keycloak.loadbalancer.server.port=8080'
       - 'traefik.http.services.keycloak.loadbalancer.sticky.cookie.name=keycloak_sticky'
@@ -38,8 +38,3 @@ services:
 
 volumes:
   postgres_data: {}
-
-networks:
-  default:
-    external: true
-    name: devops
