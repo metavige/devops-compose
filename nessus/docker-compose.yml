@@ -11,7 +11,7 @@ services:
     ports:
       - 8834:8834
     volumes:
-      - ${PWD}/certs:/opt/nessus/com/nessus/CA
+      - ./certs:/opt/nessus/com/nessus/CA
     labels:
       - 'traefik.tcp.routers.nessus.tls=true'
       - 'traefik.tcp.routers.nessus.rule=HostSNI(`${HOSTNAME}`)'

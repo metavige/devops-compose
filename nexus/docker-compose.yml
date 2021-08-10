@@ -3,22 +3,21 @@ services:
   nexus3:
     # restart: always
     image: sonatype/nexus3:latest
-    hostname: nexus.docker.internal
     # environment:
     #   INSTALL4J_ADD_VM_PARAMS: -Xms2g -Xmx2g -XX:MaxDirectMemorySize=3g
     volumes:
       - nexus-data:/nexus-data
       - nexus-blob:/nexus-data/blobs
-
   nginx:
     image: nginx:stable
+    hostname: nexus.docker.internal
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     labels:
       - 'traefik.http.routers.nexus.tls=true'
       - 'traefik.http.routers.nexus.rule=Host(`nexus.docker.internal`)'
       - 'traefik.http.routers.nexus.entrypoints=websecure'
-      - 'traefik.http.services.nexus.loadbalancer.server.port=8080'
+      - 'traefik.http.services.nexus.loadbalancer.server.port=80'
 
 networks:
   default:

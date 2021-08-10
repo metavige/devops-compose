@@ -5,7 +5,7 @@ services:
     # ports:
     #   - 53:53/udp
     volumes:
-      - ${PWD}/dnsmasq.conf:/etc/dnsmasq.conf
+      - ./dnsmasq.conf:/etc/dnsmasq.conf
     environment:
       - 'HTTP_USER=foo'
       - 'HTTP_PASS=bar'

@@ -18,8 +18,6 @@ services:
       - 'traefik.http.routers.jenkins.rule=Host(`jenkins.docker.internal`)'
       - 'traefik.http.routers.jenkins.entrypoints=websecure'
       - 'traefik.http.services.jenkins.loadbalancer.server.port=8080'
-    extra_hosts:
-      - 'nexus.docker.internal:172.18.0.1'
 
 volumes:
   jenkins_home: {}

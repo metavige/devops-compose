@@ -35,9 +35,9 @@ services:
       # - '/etc/timezone:/etc/timezone:ro'
       - '/etc/localtime:/etc/localtime:ro'
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
-      - '${PWD}/certs:/certs'
-      - '${PWD}/conf:/etc/traefik/dynamic_conf:ro'
-      - '${PWD}/logs:/var/log/traefik'
+      - './certs:/certs'
+      - './conf:/etc/traefik/dynamic_conf:ro'
+      - './logs:/var/log/traefik'
   whoami:
     image: traefik/whoami
     labels:

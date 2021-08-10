@@ -5,7 +5,7 @@ services:
     ports:
       - 9000:9000
     volumes:
-      - ${PWD}/data:/opt/sonarqube/data
+      - ./data:/opt/sonarqube/data
       # - ./sonarqube/extensions:/opt/sonarqube/extensions
 
     labels:
