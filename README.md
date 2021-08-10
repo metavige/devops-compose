@@ -14,3 +14,13 @@
 - 為了 Performance Issue, 不使用 `kubernetes`
 - 不是統一啟動，有需要再進入目錄，使用 `docker-compose up -d` 啟動
 - 所有的服務入口，統一透過 traefik 進入
+
+## .env file
+
+透過設定以下變數，可以簡化 `docker-compose.yml` 的設定
+
+```
+MY_DOMAIN=docker.internal
+DEFAULT_NETWORK=devops
+BASE_NETWORK_YAML="docker-compose.network.yaml"
+```
