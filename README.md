@@ -24,3 +24,9 @@ MY_DOMAIN=docker.internal
 DEFAULT_NETWORK=devops
 BASE_NETWORK_YAML="docker-compose.network.yaml"
 ```
+
+## Run Shell
+
+- `./start-devops.sh [folder]`: 啟動服務
+- `./stop-devops.sh [folder]`: 停止服務
+- `./show-config.sh [folder]`: 檢視服務設定 

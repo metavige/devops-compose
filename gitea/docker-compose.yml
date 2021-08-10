@@ -18,7 +18,6 @@ services:
       - 'traefik.http.routers.gitea.rule=Host(`gitea.$MY_DOMAIN`)'
       - 'traefik.http.routers.gitea.entrypoints=websecure'
       - 'traefik.http.services.gitea.loadbalancer.server.port=3000'
-
     ports:
       - '9922:22'
 
