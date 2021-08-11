@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   gitlab:
-    image: gitlab/gitlab-ce:latest
+    image: gitlab/gitlab-ce:14.1.2-ce.0
     hostname: gitlab.docker.internal
     ports:
       # - '80:80'
@@ -21,14 +21,15 @@ services:
       - gitlab-config:/etc/gitlab
       - gitlab-data:/var/opt/gitlab
   runner:
-    image: gitlab/gitlab-runner
+    image: gitlab/gitlab-runner:alpine-v14.1.0
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./runner/config:/etc/gitlab-runner
+      - gitlab-runner:/etc/gitlab-runner
 
 volumes:
   gitlab-config: {}
   gitlab-data: {}
+  gitlab-runner: {}
 
 configs:
   gitlab:
