@@ -11,6 +11,8 @@ services:
   nginx:
     image: nginx:stable
     hostname: nexus.docker.internal
+    # ports:
+    # - 8080:80
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
     labels:

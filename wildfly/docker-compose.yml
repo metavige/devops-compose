@@ -1,7 +1,7 @@
 version: '3'
 services:
   server:
-    image: jboss/wildfly
+    image: jboss/wildfly:24.0.0.Final
     labels:
       - 'traefik.http.routers.wildfly.rule=Host(`wildfly.$MY_DOMAIN`)'
       - 'traefik.http.routers.wildfly.entrypoints=web'
