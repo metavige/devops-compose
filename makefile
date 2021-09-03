@@ -10,13 +10,13 @@ COMPOSE_ARGS=--project-directory=${TARGET_DIR} \
 
 .PHONY: start stop config
 start:
-	docker compose ${COMPOSE_ARGS} up -d
+	docker-compose ${COMPOSE_ARGS} up -d
 
 restart:
-	docker compose ${COMPOSE_ARGS} restart
+	docker-compose ${COMPOSE_ARGS} restart
 
 stop:
-	docker compose ${COMPOSE_ARGS} stop
+	docker-compose ${COMPOSE_ARGS} stop
 
 config:
-	docker compose ${COMPOSE_ARGS} config
+	docker-compose ${COMPOSE_ARGS} config
