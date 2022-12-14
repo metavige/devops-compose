@@ -1,10 +1,21 @@
 version: '3'
 
 services:
+  # docker-proxy:
+  #   image: tecnativa/docker-socket-proxy
+  #   volumes:
+  #     # - ${HOME}/.local/share/containers/podman/machine/podman.sock:/var/docker/docker.sock
+  #     - /var/docker/docker.sock:/var/docker/docker.sock
+  #   ports:
+  #     - 127.0.0.1:2375:2375
+  #   privileged: true
   traefik:
     # restart: always
-    image: 'traefik:2.4'
-    hostname: traefik-devops
+    privileged: true
+    # depends_on:
+    #   - docker-proxy
+    image: 'traefik:2.9'
+    # hostname: traefik-devops
     command:
       - '--log.level=INFO'
       - '--global.checkNewVersion=true'
@@ -15,6 +26,7 @@ services:
       - '--api.insecure=true'
       - '--api.dashboard=true'
       - '--providers.file.directory=/etc/traefik/dynamic_conf'
+      - '--providers.docker.defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.docker.internal`)'
     labels:
       - 'traefik.http.routers.traefik.tls=true'
       - 'traefik.http.routers.traefik.rule=HostRegexp(`traefik.$MY_DOMAIN`)'
@@ -32,18 +44,19 @@ services:
       - '443:443'
       # - '8888:8080'
     volumes:
-      # - '/etc/timezone:/etc/timezone:ro'
-      - '/etc/localtime:/etc/localtime:ro'
+      # - ./traefik.yml:/traefik.yaml:ro
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
+      - '/etc/localtime:/etc/localtime:ro'
       - './certs:/certs'
       - './conf:/etc/traefik/dynamic_conf:ro'
       - './logs:/var/log/traefik'
   whoami:
     image: traefik/whoami
+    container_name: whoami
     labels:
       - 'traefik.http.routers.whoami.entrypoints=websecure'
       - 'traefik.http.routers.whoami.tls=true'
-      - 'traefik.http.routers.whoami.rule=hostregexp(`whoami.$MY_DOMAIN`)'
+      # - 'traefik.http.routers.whoami.rule=hostregexp(`whoami.$MY_DOMAIN`)'
 # networks:
 #   default:
 #     external: true
