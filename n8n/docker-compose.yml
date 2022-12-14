@@ -8,6 +8,6 @@ services:
       - ${HOME}/.n8n:/home/node/.n8n
     labels:
       - 'traefik.http.routers.n8n.tls=true'
-      - 'traefik.http.routers.n8n.rule=Host(`n8n.$MY_DOMAIN`)'
+      # - 'traefik.http.routers.n8n.rule=Host(`n8n.$MY_DOMAIN`)'
       - 'traefik.http.routers.n8n.entrypoints=websecure'
       - 'traefik.http.services.n8n.loadbalancer.server.port=5678'
