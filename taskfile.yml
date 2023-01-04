@@ -1,0 +1,45 @@
+version: '3'
+
+dotenv:
+  - .env
+
+tasks:
+
+  # default:
+  #   desc: 服務資訊
+  #   cmds:
+  #     - task: .compose-run
+  #       vars:
+  #         COMPOSE_CMD: "config"
+
+  start:
+    desc: 啟動服務
+    cmds:
+      - task: .compose-run
+        vars:
+          COMPOSE_CMD: "up -d"
+
+  stop:
+    desc: 停止服務
+    cmds:
+      - task: .compose-run
+        vars:
+          COMPOSE_CMD: "stop"
+
+  down:
+    desc: 結束服務
+    cmds:
+      - task: .compose-run
+        vars:
+          COMPOSE_CMD: "down"
+
+  .compose-run:
+    internal: true
+    desc: compose 指令
+    vars:
+      # COMPOSE_CMD: "config"
+      SERVICE_NAME: "{{.CLI_ARGS}}"
+      COMPOSE_FILE: "{{.SERVICE_NAME}}/docker-compose.yml"
+      NETWORK_FILE: "$BASE_NETWORK_YAML"
+    cmds:
+      - docker-compose --project-directory={{.SERVICE_NAME}} -f {{.NETWORK_FILE}} -f {{.COMPOSE_FILE}} {{.COMPOSE_CMD}}
