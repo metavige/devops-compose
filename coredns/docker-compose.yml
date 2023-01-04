@@ -1,0 +1,10 @@
+services:
+  coredns:
+    image: coredns/coredns
+    privileged: true
+    ports:
+      - 10053:53/udp
+      - 10053:53/tcp
+    volumes:
+      - ./etc:/root:ro
+    command: -conf /root/Corefile
