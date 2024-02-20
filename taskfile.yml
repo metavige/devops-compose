@@ -11,6 +11,10 @@ tasks:
   #     - task: .compose-run
   #       vars:
   #         COMPOSE_CMD: "config"
+  traefik:
+    desc: 啟動 traefik
+    cmds:
+      - docker-compose --project-directory=traefik -f $BASE_NETWORK_YAML -f traefik/docker-compose.yml up -d
 
   start:
     desc: 啟動服務
