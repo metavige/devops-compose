@@ -1,17 +1,18 @@
-version: '3.7'
+version: '3.9'
 services:
   gitlab:
-    image: gitlab/gitlab-ce:14.1.2-ce.0
+    image: gitlab/gitlab-ce:16.5.4-ce.0
     hostname: gitlab.docker.internal
     ports:
       # - '80:80'
       # - '8443:443'
       - '8822:22'
     environment:
-      GITLAB_OMNIBUS_CONFIG: "from_file('/omnibus_config.rb')"
-    configs:
-      - source: gitlab
-        target: /omnibus_config.rb
+      GITLAB_OMNIBUS_CONFIG: |
+        from_file('/opt/omnibus_config/gitlab.rb')
+    # configs:
+    #   - source: gitlab
+    #     target: /omnibus_config.rb
     labels:
       - 'traefik.http.routers.gitlab.tls=true'
       - 'traefik.http.routers.gitlab.rule=Host(`gitlab.$MY_DOMAIN`)'
@@ -20,8 +21,9 @@ services:
     volumes:
       - gitlab-config:/etc/gitlab
       - gitlab-data:/var/opt/gitlab
+      - ./config:/opt/omnibus_config:ro
   runner:
-    image: gitlab/gitlab-runner:alpine-v14.1.0
+    image: gitlab/gitlab-runner:alpine-v16.5.0
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - gitlab-runner:/etc/gitlab-runner
@@ -31,6 +33,6 @@ volumes:
   gitlab-data: {}
   gitlab-runner: {}
 
-configs:
-  gitlab:
-    file: ./gitlab.rb
+# configs:
+#   gitlab:
+#     file: ./gitlab.rb

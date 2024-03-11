@@ -12,6 +12,8 @@ services:
       - '--providers.docker.exposedbydefault=true'
       - '--entrypoints.web.address=:80'
       - '--entrypoints.websecure.address=:443'
+      - '--entrypoints.mysql.address=:3306/tcp'
+      - '--entrypoints.postgres.address=:5432/tcp'
       - '--api.insecure=true'
       - '--api.dashboard=true'
       - '--providers.file.directory=/etc/traefik/dynamic_conf'
@@ -30,7 +32,7 @@ services:
     ports:
       - '80:80'
       - '443:443'
-      # - '8888:8080'
+      # - '5432:5432'
     volumes:
       # - '/etc/timezone:/etc/timezone:ro'
       - '/etc/localtime:/etc/localtime:ro'
@@ -38,12 +40,12 @@ services:
       - './certs:/certs'
       - './conf:/etc/traefik/dynamic_conf:ro'
       - './logs:/var/log/traefik'
-  whoami:
-    image: traefik/whoami
-    labels:
-      - 'traefik.http.routers.whoami.entrypoints=websecure'
-      - 'traefik.http.routers.whoami.tls=true'
-      - 'traefik.http.routers.whoami.rule=hostregexp(`whoami.$MY_DOMAIN`)'
+  # whoami:
+  #   image: traefik/whoami
+  #   labels:
+  #     - 'traefik.http.routers.whoami.entrypoints=websecure'
+  #     - 'traefik.http.routers.whoami.tls=true'
+  #     - 'traefik.http.routers.whoami.rule=hostregexp(`whoami.$MY_DOMAIN`)'
 # networks:
 #   default:
 #     external: true

@@ -1,11 +1,15 @@
 version: '3'
 services:
   keycloak:
-    image: jboss/keycloak:14.0.0
+    image: quay.io/keycloak/keycloak:17.0.1
+    # platform: linux/amd64
     hostname: keycloak.docker.internal
+    command: start-dev
     environment:
-      - 'KEYCLOAK_USER=keycloak'
-      - 'KEYCLOAK_PASSWORD=keycloak'
+      - 'KEYCLOAK_admin=keycloak'
+      - 'KEYCLOAK_ADMIN_PASSWORD=keycloak'
+      # - 'KEYCLOAK_USER=keycloak'
+      # - 'KEYCLOAK_PASSWORD=keycloak'
       - 'PROXY_ADDRESS_FORWARDING=true'
       - 'DB_VENDOR=postgres'
       - 'DB_ADDR=postgres'
@@ -28,7 +32,7 @@ services:
     depends_on:
       - postgres
   postgres:
-    image: postgres:9.6
+    image: postgres:14
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:

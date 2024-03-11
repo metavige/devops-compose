@@ -8,6 +8,7 @@ services:
     # ports:
     #   - 3306:3306
     labels:
-      - 'traefik.tcp.routers.sonarqube.rule=Host(`mysql.$MY_DOMAIN`)'
-      - 'traefik.tcp.routers.sonarqube.entrypoints.mysql.address=":3306"'
-      - 'traefik.tcp.services.sonarqube.loadBalancer.services.address=mysql:3306'
+      - 'traefik.tcp.routers.mysql.rule=Host(`mysql.$MY_DOMAIN`)'
+      - 'traefik.tcp.routers.mysql.entrypoints=mysql'
+      - 'traefik.tcp.routers.mysql.service=mysql'
+      - 'traefik.tcp.services.mysql.loadBalancer.server.port=3306'

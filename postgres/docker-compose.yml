@@ -3,11 +3,16 @@ version: '3.1'
 services:
   db:
     image: postgres:13
-    ports:
-      - 5432:5432
+    # ports:
+    #   - 5432:5432
     environment:
       POSTGRES_USER: postgresl
       POSTGRES_PASSWORD: postgres
+    labels: 
+      - 'traefik.tcp.routers.postgres.rule=HostSNI(`postgres.$MY_DOMAIN`)'
+      - 'traefik.tcp.routers.postgres.entrypoints=postgres'
+      - 'traefik.tcp.routers.postgres.service=postgres'
+      - 'traefik.tcp.services.postgres.loadBalancer.server.port=5432' 
 
   # adminer:
   #   image: adminer
