@@ -1,8 +1,7 @@
 version: '3'
 services:
   n8n:
-    image: n8nio/n8n
-    # ports:
+    image: docker.n8n.io/n8nio/n8n
     #   - 5678:5678
     labels:
       - 'traefik.http.routers.n8n.tls=true'
@@ -10,4 +9,6 @@ services:
       - 'traefik.http.routers.n8n.entrypoints=websecure'
       - 'traefik.http.services.n8n.loadbalancer.server.port=5678'
     volumes:
-      - ~/.n8n:/home/node/.n8n
+      - ${HOME}/.n8n:/home/node/.n8n
+    environment:
+      - N8N_HOST=n8n.docker.internal

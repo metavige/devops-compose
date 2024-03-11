@@ -3,6 +3,7 @@ services:
   nexus3:
     # restart: always
     image: sonatype/nexus3:latest
+    platform: linux/amd64
     # environment:
     #   INSTALL4J_ADD_VM_PARAMS: -Xms2g -Xmx2g -XX:MaxDirectMemorySize=3g
     volumes:

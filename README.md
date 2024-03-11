@@ -27,6 +27,5 @@ BASE_NETWORK_YAML="docker-compose.network.yaml"
 
 ## Run Shell
 
-- `./start-devops.sh [folder]`: 啟動服務
-- `./stop-devops.sh [folder]`: 停止服務
-- `./show-config.sh [folder]`: 檢視服務設定 
+- `make start service=[folder]`: 啟動服務
+- `make stop service=[folder]`: 停止服務

@@ -1,0 +1,15 @@
+## C# formatting options: https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/csharp-formatting-options
+
+# Remove the line below if you want to inherit .editorconfig settings from higher directories
+root = true
+
+#### Core EditorConfig Options ####
+[*]
+
+# Indentation and spacing
+end_of_line = lf
+indent_size = 2
+indent_style = space
+tab_width = 2
+charset = utf-8
+
