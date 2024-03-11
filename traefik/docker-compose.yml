@@ -1,21 +1,9 @@
 version: '3'
 
 services:
-  # docker-proxy:
-  #   image: tecnativa/docker-socket-proxy
-  #   volumes:
-  #     # - ${HOME}/.local/share/containers/podman/machine/podman.sock:/var/docker/docker.sock
-  #     - /var/docker/docker.sock:/var/docker/docker.sock
-  #   ports:
-  #     - 127.0.0.1:2375:2375
-  #   privileged: true
   traefik:
-    # restart: always
     privileged: true
-    # depends_on:
-    #   - docker-proxy
     image: 'traefik:2.9'
-    # hostname: traefik-devops
     command:
       - '--log.level=INFO'
       - '--global.checkNewVersion=true'
