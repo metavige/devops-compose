@@ -1,44 +1,47 @@
 version: '3'
 services:
   keycloak:
-    image: quay.io/keycloak/keycloak:17.0.1
-    # platform: linux/amd64
+    image: keycloak/keycloak:25.0
     hostname: keycloak.docker.internal
     command: start-dev
     environment:
-      - 'KEYCLOAK_admin=keycloak'
-      - 'KEYCLOAK_ADMIN_PASSWORD=keycloak'
-      # - 'KEYCLOAK_USER=keycloak'
-      # - 'KEYCLOAK_PASSWORD=keycloak'
-      - 'PROXY_ADDRESS_FORWARDING=true'
-      - 'DB_VENDOR=postgres'
-      - 'DB_ADDR=postgres'
-      - 'DB_USER=keycloak'
-      - 'DB_PASSWORD=keycloak'
+    - KEYCLOAK_ADMIN=admin
+    - KEYCLOAK_ADMIN_PASSWORD=admin
+    - 'KEYCLOAK_USER=keycloak'
+    - 'KEYCLOAK_PASSWORD=keycloak'
+    - 'PROXY_ADDRESS_FORWARDING=true'
+    - 'KC_DB=postgres'
+    - 'KC_DB_URL=jdbc:postgresql://postgres:5432/keycloak'
+    - 'KC_DB_USERNAME=keycloak'
+    - 'KC_DB_PASSWORD=keycloak'
+    - KC_HOSTNAME=https://keycloak.docker.internal
+    # - KC_HEALTH_ENABLED=true
     #   INSTALL4J_ADD_VM_PARAMS: -Xms4g -Xmx4g -XX:MaxDirectMemorySize=4g
     # volumes:
     #   - ./deployments:/opt/jboss/keycloak/standalone/deployments
     #ports:
     #  - 8080:8080/tcp
-    # command: ./standard
+    command:
+    - start-dev
+    - --proxy-headers=xforwarded
     labels:
-      - 'traefik.http.routers.keycloak.tls=true'
-      - 'traefik.http.routers.keycloak.rule=Host(`keycloak.$MY_DOMAIN`)'
-      - 'traefik.http.routers.keycloak.entrypoints=websecure'
-      - 'traefik.http.services.keycloak.loadbalancer.server.port=8080'
-      - 'traefik.http.services.keycloak.loadbalancer.sticky.cookie.name=keycloak_sticky'
-      - 'traefik.http.services.keycloak.loadbalancer.sticky.cookie.secure=true'
-      - 'traefik.http.services.keycloak.loadbalancer.sticky.cookie.httpOnly=true'
+    - 'traefik.http.routers.keycloak.tls=true'
+    - 'traefik.http.routers.keycloak.rule=Host(`keycloak.$MY_DOMAIN`)'
+    - 'traefik.http.routers.keycloak.entrypoints=websecure'
+    - 'traefik.http.services.keycloak.loadbalancer.server.port=8080'
+    - 'traefik.http.services.keycloak.loadbalancer.sticky.cookie.name=keycloak_sticky'
+    - 'traefik.http.services.keycloak.loadbalancer.sticky.cookie.secure=true'
+    - 'traefik.http.services.keycloak.loadbalancer.sticky.cookie.httpOnly=true'
     depends_on:
-      - postgres
+    - postgres
   postgres:
     image: postgres:14
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+    - postgres_data:/var/lib/postgresql/data
     environment:
-      - 'POSTGRES_DB=keycloak'
-      - 'POSTGRES_USER=keycloak'
-      - 'POSTGRES_PASSWORD=keycloak'
+    - 'POSTGRES_DB=keycloak'
+    - 'POSTGRES_USER=keycloak'
+    - 'POSTGRES_PASSWORD=keycloak'
 
 volumes:
   postgres_data: {}
