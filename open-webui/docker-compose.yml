@@ -1,0 +1,16 @@
+# docker run -d -p 3000:8080 -v ollama:/root/.ollama -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:ollam
+
+services:
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:ollama
+    # ports:
+    # - 3000:8080
+    labels:
+    - 'traefik.http.routers.n8n.tls=true'
+    - 'traefik.http.routers.n8n.rule=Host(`open-webui.$MY_DOMAIN`)'
+    - 'traefik.http.routers.n8n.entrypoints=websecure'
+    - 'traefik.http.services.n8n.loadbalancer.server.port=8080'
+    volumes:
+    - ${HOME}/.ollama:/root/.ollama
+    - ${PWD}/open-webui:/app/backend/data
+    restart: always
