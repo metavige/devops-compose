@@ -1,0 +1,47 @@
+services:
+  mc:
+    container_name: minecraft-server
+    image: itzg/minecraft-server:java21
+    restart: no
+    labels:
+    # Set lazymc.enabled to true to enable lazymc on this container
+    - lazymc.enabled=true
+    # Required to find the container to manage it
+    - lazymc.group=mc
+    # Point to the service name of the Minecraft server
+    - lazymc.server.address=mc:25565
+    # - lazymc.public.version=1.20.4
+    tty: true
+    stdin_open: true
+    # ports:
+    # - "25565:25565"
+    environment:
+      EULA: "TRUE"
+      TYPE: "AUTO_CURSEFORGE"
+      CF_API_KEY: ${CF_API_KEY}
+      # CF_PAGE_URL: https://www.curseforge.com/minecraft/modpacks/everyday-modpack/files/5228167
+      CF_PAGE_URL: https://www.curseforge.com/minecraft/modpacks/everyday-modpack
+      VERSION: "1.21.4"
+      MEMORY: "4G"
+      # WHITELIST: "bot_anny,09762575-6878-4a1a-ac51-def9e6131cd7"
+      # ENABLE_WHITELIST: "false"
+      # OVERRIDE_WHITELIST: "true"
+      ONLINE_MODE: "false"
+      TZ: "Asia/Taipei"
+    volumes:
+    # attach the relative directory 'data' to the container's /data path
+    - ./data:/data
+    - ./downloads:/downloads
+  lazymc:
+    container_name: lazymc
+    image: ghcr.io/joesturge/lazymc-docker-proxy:latest
+    restart: unless-stopped
+    volumes:
+    # you should mount the minecraft server dir under /server, using read only.
+    - ./data:/server:ro
+    # you need to supply the docker socket, so that the container can run docker command
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+    # lazymc-docker-proxy acts as a proxy, so there is
+    # no need to expose the server port on the Minecraft container
+    - "25565:25565"
