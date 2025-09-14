@@ -38,6 +38,22 @@ tasks:
       - echo "  • task start SERVICE  - 啟動指定服務"
       - echo "  • task stop SERVICE   - 停止指定服務"
       - echo "  • task status SERVICE - 查看服務狀態"
+      - echo ""
+      - echo "服務管理:"
+      - echo "  • task list           - 列出所有可用服務"
+      - echo "  • task search KEYWORD - 搜尋服務"
+
+  list:
+    desc: 列出所有可用服務
+    cmds:
+      - task: .list-services
+
+  search:
+    desc: 搜尋服務
+    cmds:
+      - task: .search-services
+        vars:
+          KEYWORD: "{{.CLI_ARGS}}"
 
   # 核心服務
   start:core:
@@ -142,17 +158,140 @@ tasks:
     internal: true
     desc: 執行服務 Docker Compose 指令
     vars:
-      SERVICE_DIR: "{{.ROOT_DIR}}/{{.SERVICE}}"
+      RESOLVED_SERVICE:
+        sh: |
+          SERVICE="{{.SERVICE}}"
+          if [ -z "$SERVICE" ]; then
+            echo "請指定服務名稱"
+            exit 1
+          fi
+
+          # 如果是完整路徑，直接使用
+          if [ -f "{{.ROOT_DIR}}/$SERVICE/docker-compose.yml" ]; then
+            echo "$SERVICE"
+            exit 0
+          fi
+
+          # 搜尋短名稱
+          FOUND=$(find {{.ROOT_DIR}} -name "docker-compose.yml" -type f | grep -E "/$SERVICE/docker-compose.yml$" | head -1)
+          if [ -n "$FOUND" ]; then
+            echo "$FOUND" | sed 's|{{.ROOT_DIR}}/||' | sed 's|/docker-compose.yml||'
+            exit 0
+          fi
+
+          # 模糊搜尋（包含該名稱的服務）
+          FOUND=$(find {{.ROOT_DIR}} -name "docker-compose.yml" -type f | grep -E "/[^/]*$SERVICE[^/]*/docker-compose.yml$" | head -1)
+          if [ -n "$FOUND" ]; then
+            echo "$FOUND" | sed 's|{{.ROOT_DIR}}/||' | sed 's|/docker-compose.yml||'
+            exit 0
+          fi
+
+          echo "找不到服務: $SERVICE"
+          exit 1
+      SERVICE_DIR: "{{.ROOT_DIR}}/{{.RESOLVED_SERVICE}}"
       COMPOSE_FILE: "{{.SERVICE_DIR}}/docker-compose.yml"
     preconditions:
       - sh: test -n "{{.SERVICE}}"
-        msg: "請指定服務名稱，例如: task start infrastructure/storage/postgres"
+        msg: "請指定服務名稱，例如: task start nexus 或 task start infrastructure/storage/postgres"
       - sh: test -f "{{.COMPOSE_FILE}}"
         msg: "找不到服務配置檔案: {{.COMPOSE_FILE}}"
     cmds:
       - |
+        echo "🔍 解析服務: {{.SERVICE}} → {{.RESOLVED_SERVICE}}"
         if [ -f "{{.NETWORK_FILE}}" ]; then
           docker compose --project-directory "{{.SERVICE_DIR}}" -f "{{.NETWORK_FILE}}" -f "{{.SERVICE_DIR}}/docker-compose.yml" {{.CMD}}
         else
           docker compose --project-directory "{{.SERVICE_DIR}}" -f "{{.SERVICE_DIR}}/docker-compose.yml" {{.CMD}}
+        fi
+
+  .list-services:
+    internal: true
+    desc: 列出所有可用服務
+    cmds:
+      - |
+        echo "📋 可用服務列表："
+        echo ""
+        echo "📂 按分層分類："
+
+        # 核心服務
+        echo "🔧 核心服務:"
+        if [ -f "{{.ROOT_DIR}}/core/docker-compose.yml" ]; then
+          echo "  • core (Traefik + Registry Mirror)"
+        fi
+        echo ""
+
+        # 基礎設施層
+        echo "🏗️ 基礎設施層:"
+        find {{.ROOT_DIR}}/infrastructure -name "docker-compose.yml" -type f 2>/dev/null | while read file; do
+          service_path=$(echo "$file" | sed 's|{{.ROOT_DIR}}/||' | sed 's|/docker-compose.yml||')
+          service_name=$(basename "$service_path")
+          echo "  • $service_name ($service_path)"
+        done
+        echo ""
+
+        # 平台層
+        echo "🔧 平台層:"
+        find {{.ROOT_DIR}}/platform -name "docker-compose.yml" -type f 2>/dev/null | while read file; do
+          service_path=$(echo "$file" | sed 's|{{.ROOT_DIR}}/||' | sed 's|/docker-compose.yml||')
+          service_name=$(basename "$service_path")
+          echo "  • $service_name ($service_path)"
+        done
+        echo ""
+
+        # 開發層
+        echo "💻 開發層:"
+        find {{.ROOT_DIR}}/development -name "docker-compose.yml" -type f 2>/dev/null | while read file; do
+          service_path=$(echo "$file" | sed 's|{{.ROOT_DIR}}/||' | sed 's|/docker-compose.yml||')
+          service_name=$(basename "$service_path")
+          echo "  • $service_name ($service_path)"
+        done
+        echo ""
+
+        # 應用層
+        echo "🚀 應用層:"
+        find {{.ROOT_DIR}}/applications -name "docker-compose.yml" -type f 2>/dev/null | while read file; do
+          service_path=$(echo "$file" | sed 's|{{.ROOT_DIR}}/||' | sed 's|/docker-compose.yml||')
+          service_name=$(basename "$service_path")
+          echo "  • $service_name ($service_path)"
+        done
+        echo ""
+
+        echo "💡 使用方式："
+        echo "  • 短名稱: task start nexus"
+        echo "  • 完整路徑: task start development/quality/nexus"
+
+  .search-services:
+    internal: true
+    desc: 搜尋服務
+    vars:
+      KEYWORD: "{{.KEYWORD}}"
+    preconditions:
+      - sh: test -n "{{.KEYWORD}}"
+        msg: "請提供搜尋關鍵字，例如: task search nexus"
+    cmds:
+      - |
+        echo "🔍 搜尋結果: '{{.KEYWORD}}'"
+        echo ""
+
+        FOUND=0
+        find {{.ROOT_DIR}} -name "docker-compose.yml" -type f | while read file; do
+          service_path=$(echo "$file" | sed 's|{{.ROOT_DIR}}/||' | sed 's|/docker-compose.yml||')
+          service_name=$(basename "$service_path")
+
+          # 檢查服務名稱或路徑是否包含關鍵字
+          if echo "$service_name" | grep -qi "{{.KEYWORD}}" || echo "$service_path" | grep -qi "{{.KEYWORD}}"; then
+            echo "✓ $service_name ($service_path)"
+            FOUND=1
+          fi
+        done
+
+        if [ $FOUND -eq 0 ]; then
+          echo "❌ 未找到包含 '{{.KEYWORD}}' 的服務"
+          echo ""
+          echo "💡 提示: 使用 'task list' 查看所有可用服務"
+        else
+          echo ""
+          echo "💡 使用方式："
+          echo "  • task start <服務名稱>"
+          echo "  • task status <服務名稱>"
         fi
