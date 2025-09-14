@@ -138,3 +138,5 @@ backups/
 .docker/
 docker-compose.override.yml
 docker-compose.override.yaml
+infrastructure/storage/postgres/secrets/pgadmin_password.txt
+.gitignore

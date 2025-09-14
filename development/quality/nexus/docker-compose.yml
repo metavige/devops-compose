@@ -1,0 +1,23 @@
+version: '3'
+services:
+  nexus3:
+    # restart: always
+    image: sonatype/nexus3:latest
+    platform: linux/amd64
+    # environment:
+    #   INSTALL4J_ADD_VM_PARAMS: -Xms2g -Xmx2g -XX:MaxDirectMemorySize=3g
+    volumes:
+      - ${PWD}/nexus-data:/nexus-data
+  nginx:
+    image: nginx:stable
+    hostname: nexus.docker.internal
+    # ports:
+    # - 8080:80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    labels:
+      - 'traefik.http.routers.nexus.tls=true'
+      - 'traefik.http.routers.nexus.rule=Host(`nexus.$MY_DOMAIN`)'
+      - 'traefik.http.routers.nexus.entrypoints=websecure'
+      - 'traefik.http.services.nexus.loadbalancer.server.port=80'
+ 
