@@ -17,6 +17,7 @@ infrastructure/storage/postgres/initdb/*.sql
 infrastructure/storage/redis/data
 infrastructure/storage/mysql/data
 infrastructure/storage/nfs-server/data
+infrastructure/storage/postgres/secrets
 
 # Security - 機密檔案
 infrastructure/security/*/secrets/*.txt
@@ -138,5 +139,5 @@ backups/
 .docker/
 docker-compose.override.yml
 docker-compose.override.yaml
-infrastructure/storage/postgres/secrets/pgadmin_password.txt
+
 .gitignore
