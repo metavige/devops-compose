@@ -7,7 +7,7 @@ services:
     # environment:
     #   INSTALL4J_ADD_VM_PARAMS: -Xms2g -Xmx2g -XX:MaxDirectMemorySize=3g
     volumes:
-      - ${PWD}/nexus-data:/nexus-data
+      - ./nexus-data:/nexus-data
   nginx:
     image: nginx:stable
     hostname: nexus.docker.internal

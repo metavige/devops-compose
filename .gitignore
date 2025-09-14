@@ -30,6 +30,8 @@ infrastructure/security/keycloak/themes/custom/
 infrastructure/monitoring/*/data
 infrastructure/monitoring/*/logs
 
+infrastructure/docker/registry/data
+
 # === Platform Layer ===
 # Container Management
 platform/containers/harbor2/data

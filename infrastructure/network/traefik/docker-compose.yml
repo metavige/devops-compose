@@ -18,7 +18,7 @@ services:
     - '--providers.docker.defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.docker.internal`)'
     labels:
     - 'traefik.http.routers.traefik.tls=true'
-    - 'traefik.http.routers.traefik.rule=HostRegexp(`traefik.$MY_DOMAIN`)'
+    - 'traefik.http.routers.traefik.rule=Host(`traefik.$MY_DOMAIN`)'
     - 'traefik.http.routers.traefik.entrypoints=websecure'
     - 'traefik.http.routers.traefik.service=api@internal'
     - 'traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https'
