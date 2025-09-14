@@ -3,48 +3,156 @@ version: '3'
 dotenv:
   - .env
 
+vars:
+  ROOT_DIR:
+    sh: pwd
+  NETWORK_FILE: "{{.ROOT_DIR}}/docker-compose.network.yaml"
+
 tasks:
 
-  # default:
-  #   desc: 服務資訊
-  #   cmds:
-  #     - task: .compose-run
-  #       vars:
-  #         COMPOSE_CMD: "config"
-  traefik:
-    desc: 啟動 traefik
-    dir: infrastructure/network/traefik
+  default:
+    desc: 顯示可用指令和服務狀態
     cmds:
-      - docker compose up -d
+      - task: info
 
-  start:
-    desc: 啟動服務
+  info:
+    desc: 顯示服務資訊
     cmds:
-      - task: .compose-run
+      - echo "🎉 DevOps Compose 可用指令："
+      - echo ""
+      - echo "核心服務:"
+      - echo "  • task start:core     - 啟動核心服務 (Traefik + Registry)"
+      - echo "  • task stop:core      - 停止核心服務"
+      - echo ""
+      - echo "基礎設施層:"
+      - echo "  • task start:postgres - 啟動 PostgreSQL"
+      - echo "  • task start:redis    - 啟動 Redis"
+      - echo "  • task start:mysql    - 啟動 MySQL"
+      - echo ""
+      - echo "開發層:"
+      - echo "  • task start:gitlab   - 啟動 GitLab"
+      - echo "  • task start:jenkins  - 啟動 Jenkins"
+      - echo "  • task start:nexus    - 啟動 Nexus"
+      - echo ""
+      - echo "通用指令:"
+      - echo "  • task start SERVICE  - 啟動指定服務"
+      - echo "  • task stop SERVICE   - 停止指定服務"
+      - echo "  • task status SERVICE - 查看服務狀態"
+
+  # 核心服務
+  start:core:
+    desc: 啟動核心基礎服務
+    cmds:
+      - ./scripts/start-core.sh
+
+  stop:core:
+    desc: 停止核心基礎服務
+    cmds:
+      - ./scripts/stop-core.sh
+
+  # 基礎設施層服務快捷指令
+  start:postgres:
+    desc: 啟動 PostgreSQL
+    cmds:
+      - task: start
+        vars: { SERVICE: "infrastructure/storage/postgres" }
+
+  start:redis:
+    desc: 啟動 Redis
+    cmds:
+      - task: start
+        vars: { SERVICE: "infrastructure/storage/redis" }
+
+  start:mysql:
+    desc: 啟動 MySQL
+    cmds:
+      - task: start
+        vars: { SERVICE: "infrastructure/storage/mysql" }
+
+  # 開發層服務快捷指令
+  start:gitlab:
+    desc: 啟動 GitLab
+    cmds:
+      - task: start
+        vars: { SERVICE: "development/scm/gitlab" }
+
+  start:jenkins:
+    desc: 啟動 Jenkins
+    cmds:
+      - task: start
+        vars: { SERVICE: "development/cicd/jenkins" }
+
+  start:nexus:
+    desc: 啟動 Nexus
+    cmds:
+      - task: start
+        vars: { SERVICE: "development/quality/nexus" }
+
+  # 通用服務管理指令
+  start:
+    desc: 啟動指定服務
+    cmds:
+      - task: .service-cmd
         vars:
-          COMPOSE_CMD: "up -d"
+          SERVICE: "{{.SERVICE | default .CLI_ARGS}}"
+          CMD: "up -d"
 
   stop:
-    desc: 停止服務
+    desc: 停止指定服務
     cmds:
-      - task: .compose-run
+      - task: .service-cmd
         vars:
-          COMPOSE_CMD: "stop"
+          SERVICE: "{{.SERVICE | default .CLI_ARGS}}"
+          CMD: "stop"
 
   down:
-    desc: 結束服務
+    desc: 完全停止指定服務 (包含移除容器)
     cmds:
-      - task: .compose-run
+      - task: .service-cmd
         vars:
-          COMPOSE_CMD: "down"
+          SERVICE: "{{.SERVICE | default .CLI_ARGS}}"
+          CMD: "down"
 
-  .compose-run:
-    internal: true
-    desc: compose 指令
-    vars:
-      # COMPOSE_CMD: "config"
-      SERVICE_NAME: "{{.CLI_ARGS}}"
-      COMPOSE_FILE: "{{.SERVICE_NAME}}/docker-compose.yml"
-      NETWORK_FILE: "$BASE_NETWORK_YAML"
+  restart:
+    desc: 重啟指定服務
     cmds:
-      - docker compose --project-directory={{.SERVICE_NAME}} -f {{.NETWORK_FILE}} -f {{.COMPOSE_FILE}} {{.COMPOSE_CMD}}
+      - task: .service-cmd
+        vars:
+          SERVICE: "{{.SERVICE | default .CLI_ARGS}}"
+          CMD: "restart"
+
+  status:
+    desc: 查看指定服務狀態
+    cmds:
+      - task: .service-cmd
+        vars:
+          SERVICE: "{{.SERVICE | default .CLI_ARGS}}"
+          CMD: "ps"
+
+  logs:
+    desc: 查看指定服務日誌
+    cmds:
+      - task: .service-cmd
+        vars:
+          SERVICE: "{{.SERVICE | default .CLI_ARGS}}"
+          CMD: "logs -f"
+
+  # 內部指令
+  .service-cmd:
+    internal: true
+    desc: 執行服務 Docker Compose 指令
+    vars:
+      SERVICE_DIR: "{{.ROOT_DIR}}/{{.SERVICE}}"
+      COMPOSE_FILE: "{{.SERVICE_DIR}}/docker-compose.yml"
+    preconditions:
+      - sh: test -n "{{.SERVICE}}"
+        msg: "請指定服務名稱，例如: task start infrastructure/storage/postgres"
+      - sh: test -f "{{.COMPOSE_FILE}}"
+        msg: "找不到服務配置檔案: {{.COMPOSE_FILE}}"
+    cmds:
+      - |
+        if [ -f "{{.NETWORK_FILE}}" ]; then
+          docker compose --project-directory "{{.SERVICE_DIR}}" -f "{{.NETWORK_FILE}}" -f "{{.SERVICE_DIR}}/docker-compose.yml" {{.CMD}}
+        else
+          docker compose --project-directory "{{.SERVICE_DIR}}" -f "{{.SERVICE_DIR}}/docker-compose.yml" {{.CMD}}
+        fi
