@@ -13,8 +13,9 @@ tasks:
   #         COMPOSE_CMD: "config"
   traefik:
     desc: 啟動 traefik
+    dir: infrastructure/network/traefik
     cmds:
-      - docker-compose --project-directory=traefik -f $BASE_NETWORK_YAML -f traefik/docker-compose.yml up -d
+      - docker compose up -d
 
   start:
     desc: 啟動服務
@@ -46,4 +47,4 @@ tasks:
       COMPOSE_FILE: "{{.SERVICE_NAME}}/docker-compose.yml"
       NETWORK_FILE: "$BASE_NETWORK_YAML"
     cmds:
-      - docker-compose --project-directory={{.SERVICE_NAME}} -f {{.NETWORK_FILE}} -f {{.COMPOSE_FILE}} {{.COMPOSE_CMD}}
+      - docker compose --project-directory={{.SERVICE_NAME}} -f {{.NETWORK_FILE}} -f {{.COMPOSE_FILE}} {{.COMPOSE_CMD}}

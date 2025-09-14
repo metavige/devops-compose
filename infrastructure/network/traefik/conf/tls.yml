@@ -1,10 +1,9 @@
-# TLS 配置
+# Traefik v3 TLS 配置
 tls:
   options:
     default:
-      sslProtocols:
-        - "TLSv1.2"
-        - "TLSv1.3"
+      minVersion: "VersionTLS12"
+      maxVersion: "VersionTLS13"
       cipherSuites:
         - "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
         - "TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305"
@@ -15,14 +14,14 @@ tls:
 
   # 本地開發用的自簽憑證
   certificates:
-    - certFile: /certs/local-cert.pem
-      keyFile: /certs/local-key.pem
-      stores:
-        - default
+    - certFile: /certs/traefik.crt
+      keyFile: /certs/traefik.key
+      # stores:
+      #   - default
 
-# 通配符憑證 store
-stores:
-  default:
-    defaultCertificate:
-      certFile: /certs/local-cert.pem
-      keyFile: /certs/local-key.pem
+# # 通配符憑證 store
+# stores:
+#   default:
+#     defaultCertificate:
+#       certFile: /certs/traefik.pem
+#       keyFile: /certs/traefik.pem
