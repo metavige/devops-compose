@@ -1,112 +1,43 @@
-
-
-# Traefik 反向代理服務 - 自包含配置
-# 可以獨立啟動: docker-compose up -d
+version: '3'
 
 services:
   traefik:
     image: 'traefik:${TRAEFIK_VERSION:-v3.5}'
-    container_name: traefik
-    restart: unless-stopped
     command:
-      # Log 配置
-      - '--log.level=${LOG_LEVEL:-INFO}'
-      - '--log.filepath=/var/log/traefik/traefik.log'
-      - '--accesslog=true'
-      - '--accesslog.filepath=/var/log/traefik/access.log'
-
-      # API & Dashboard 配置
-      - '--api.dashboard=true'
-      - '--api.insecure=${TRAEFIK_API_INSECURE:-true}'
-
-      # Provider 配置
-      - '--providers.docker=true'
-      - '--providers.docker.exposedbydefault=false'
-      - '--providers.docker.defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.${MY_DOMAIN:-docker.internal}`)'
-      - '--providers.file.directory=/etc/traefik/dynamic_conf'
-      - '--providers.file.watch=true'
-
-      # EntryPoints 配置
-      - '--entrypoints.web.address=:80'
-      - '--entrypoints.websecure.address=:443'
-
-      # # For 非 HTTP 服務
-      # - '--entrypoints.mysql.address=:3306/tcp'
-      # - '--entrypoints.postgres.address=:5432/tcp'
-
-      # # Let's Encrypt (可選)
-      # - '--certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL:-admin@example.com}'
-      # - '--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json'
-      # - '--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web'
-
-      # # 監控
-      # - '--metrics.prometheus=true'
-      # - '--metrics.prometheus.addEntryPointsLabels=true'
-      # - '--metrics.prometheus.addServicesLabels=true'
-
+    - '--log.level=INFO'
+    - '--global.checkNewVersion=true'
+    - '--providers.docker=true'
+    - '--providers.docker.exposedbydefault=true'
+    - '--entrypoints.web.address=:80'
+    - '--entrypoints.websecure.address=:443'
+    - '--entrypoints.mysql.address=:3306/tcp'
+    - '--entrypoints.postgres.address=:5432/tcp'
+    - '--api.insecure=true' # Allow insecure API for development
+    - '--api.dashboard=true'
+    - '--providers.file.directory=/etc/traefik/dynamic_conf'
+    - '--providers.docker.defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.docker.internal`)'
     labels:
-      # Dashboard 設定
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.traefik.tls=true'
-      - 'traefik.http.routers.traefik.rule=Host(`traefik.${MY_DOMAIN:-docker.internal}`)'
-      - 'traefik.http.routers.traefik_dashboard.entrypoints=websecure'
-      - 'traefik.http.routers.traefik_dashboard.service=dashboard@internal'
-      # - 'traefik.http.services.traefik_dashboard.loadbalancer.server.port=8080'
-      # - 'traefik.http.routers.traefik.priority=100'
-
-      # HTTPS 重導向中間件
-      - 'traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https'
-      - 'traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)'
-      - 'traefik.http.routers.http-catchall.entrypoints=web'
-      - 'traefik.http.routers.http-catchall.middlewares=redirect-to-https@docker'
-
+    - 'traefik.http.routers.traefik.tls=true'
+    - 'traefik.http.routers.traefik.rule=HostRegexp(`traefik.$MY_DOMAIN`)'
+    - 'traefik.http.routers.traefik.entrypoints=websecure'
+    - 'traefik.http.routers.traefik.service=api@internal'
+    - 'traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https'
+    - 'traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)'
+    - 'traefik.http.routers.http-catchall.entrypoints=web'
+    - 'traefik.http.routers.http-catchall.middlewares=redirect-to-https@docker'
     ports:
-      - '80:80'
-      - '443:443'
-      - '8080:8080' # Traefik Dashboard
-      # - '3306:3306'   # MySQL
-      # - '5432:5432'   # PostgreSQL
-
+    - '80:80'
+    - '443:443'
     volumes:
-      - '/var/run/docker.sock:/var/run/docker.sock:ro'
-      - '/etc/localtime:/etc/localtime:ro'
-      - './certs:/certs:ro'
-      - './conf:/etc/traefik/dynamic_conf:ro'
-      - './logs:/var/log/traefik'
-      # - 'letsencrypt:/letsencrypt'
+    - '/var/run/docker.sock:/var/run/docker.sock:ro'
+    - '/etc/localtime:/etc/localtime:ro'
+    - './certs:/certs'
+    - './conf:/etc/traefik/dynamic_conf:ro'
+    - './logs:/var/log/traefik'
 
-    healthcheck:
-      test: ["CMD", "traefik", "healthcheck", "--ping"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-          cpus: '0.5'
-        reservations:
-          memory: 128M
-          cpus: '0.25'
-
-  # Whoami 測試服務
   whoami:
-    image: traefik/whoami:${WHOAMI_VERSION:-latest}
+    image: traefik/whoami
     container_name: whoami
     labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.whoami.rule=Host(`whoami.${MY_DOMAIN:-docker.internal}`)'
-      - 'traefik.http.routers.whoami.entrypoints=websecure'
-      - 'traefik.http.routers.whoami.tls=true'
-      - 'traefik.http.services.whoami.loadbalancer.server.port=80'
-
-# volumes:
-#   letsencrypt:
-#     external: true
-#     name: letsencrypt
-
-networks:
-  default:
-    external: true
-    name: ${DEFAULT_NETWORK:-devops}
+    - 'traefik.http.routers.whoami.entrypoints=websecure'
+    - 'traefik.http.routers.whoami.tls=true'
