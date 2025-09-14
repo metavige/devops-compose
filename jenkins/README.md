@@ -1,1 +1,0 @@
-- 這邊會用 root 啟動 jenkins，因為我嘗試在裡面使用 Cloud Docker provider
