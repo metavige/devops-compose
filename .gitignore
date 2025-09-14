@@ -12,75 +12,75 @@ infrastructure/network/traefik/logs/*.log
 infrastructure/network/traefik/conf/pilot.yml
 
 # Storage - 資料目錄
-infrastructure/storage/postgres/data/
+infrastructure/storage/postgres/data
 infrastructure/storage/postgres/initdb/*.sql
-infrastructure/storage/redis/data/
-infrastructure/storage/mysql/data/
-infrastructure/storage/nfs-server/data/
+infrastructure/storage/redis/data
+infrastructure/storage/mysql/data
+infrastructure/storage/nfs-server/data
 
 # Security - 機密檔案
 infrastructure/security/*/secrets/*.txt
 infrastructure/security/*/secrets/*.key
 infrastructure/security/*/secrets/*.crt
-infrastructure/security/keycloak/data/
+infrastructure/security/keycloak/data
 infrastructure/security/keycloak/themes/custom/
 
 # Monitoring - 日誌和資料
-infrastructure/monitoring/*/data/
-infrastructure/monitoring/*/logs/
+infrastructure/monitoring/*/data
+infrastructure/monitoring/*/logs
 
 # === Platform Layer ===
 # Container Management
-platform/containers/harbor2/data/
-platform/containers/harbor2/logs/
-platform/containers/portainer/data/
-platform/containers/rancher/data/
+platform/containers/harbor2/data
+platform/containers/harbor2/logs
+platform/containers/portainer/data
+platform/containers/rancher/data
 
 # Messaging
-platform/messaging/rabbitmq/data/
+platform/messaging/rabbitmq/data
 
 # Runtime
-platform/runtime/wildfly/deployments/
-platform/runtime/wildfly/logs/
+platform/runtime/wildfly/deployments
+platform/runtime/wildfly/logs
 
 # === Development Layer ===
 # Source Control Management
-development/scm/gitlab/storage/
-development/scm/gitlab/data/
-development/scm/gitlab/logs/
-development/scm/gitea/data/
+development/scm/gitlab/storage
+development/scm/gitlab/data
+development/scm/gitlab/logs
+development/scm/gitea/data
 
 # CI/CD
-development/ci-cd/*/data/
-development/ci-cd/*/workspace/
-development/ci-cd/*/jobs/
+development/ci-cd/*/data
+development/ci-cd/*/workspace
+development/ci-cd/*/jobs
 
 # Quality Assurance
-development/quality/nexus/nexus-data/
-development/quality/sonarqube/data/
-development/quality/sonarqube/logs/
+development/quality/nexus/nexus-data
+development/quality/sonarqube/data
+development/quality/sonarqube/logs
 
 # Collaboration
-development/collaboration/*/data/
-development/collaboration/*/uploads/
+development/collaboration/*/data
+development/collaboration/*/uploads
 
 # === Application Layer ===
 # Business Applications
-applications/business/*/data/
-applications/business/*/logs/
+applications/business/*/data
+applications/business/*/logs
 
 # Development Tools
-applications/tools/*/data/
-applications/tools/*/workspace/
+applications/tools/*/data
+applications/tools/*/workspace
 
 # API Management
-applications/api/*/data/
-applications/api/*/logs/
+applications/api/*/data
+applications/api/*/logs
 
 # Gaming
-applications/gaming/minecraft/data/
-applications/gaming/minecraft/downloads/
-applications/gaming/minecraft/worlds/
+applications/gaming/minecraft/data
+applications/gaming/minecraft/downloads
+applications/gaming/minecraft/worlds
 
 # === 通用忽略項目 ===
 # 壓縮檔案
@@ -92,7 +92,7 @@ applications/gaming/minecraft/worlds/
 # 日誌檔案
 *.log
 *.log.*
-logs/
+logs
 *.out
 
 # 暫存檔案
