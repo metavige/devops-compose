@@ -1,4 +1,4 @@
-version: '3.8'
+
 
 # Infrastructure Security Layer
 # 此層包含所有安全相關的基礎設施服務
@@ -9,6 +9,10 @@ services:
     extends:
       file: ./keycloak/docker-compose.yml
       service: keycloak
+
+volumes:
+  keycloak_data:
+    name: keycloak_data
 
 networks:
   default:

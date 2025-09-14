@@ -1,4 +1,8 @@
-version: '3.8'
+
+
+# Redis 快取服務 - 自包含配置
+# 可以獨立啟動: docker-compose up -d
+# 包含 Redis + Redis Commander 管理界面
 
 services:
   redis:
@@ -57,4 +61,10 @@ services:
 
 volumes:
   redis_data:
+    external: true
     name: redis_data
+
+networks:
+  default:
+    external: true
+    name: ${DEFAULT_NETWORK:-devops}

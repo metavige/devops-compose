@@ -1,83 +1,17 @@
-version: '3.8'
 
-# Infrastructure 完整堆疊
-# 包含網路、儲存、安全三個子層
 
-services:
-  # === 網路層 ===
-  traefik:
-    extends:
-      file: ./network/traefik/docker-compose.yml
-      service: traefik
+# Infrastructure 完整堆疊 - 使用 include 方式
+# 便利工具：可以一次啟動所有基礎設施服務
+# 實際配置都在各自的服務目錄中
 
-  whoami:
-    extends:
-      file: ./network/traefik/docker-compose.yml
-      service: whoami
+include:
+  # 網路層
+  - path: ./network/traefik/docker-compose.yml
+  - path: ./network/dnsmasq/docker-compose.yml
 
-  dnsmasq:
-    extends:
-      file: ./network/dnsmasq/docker-compose.yml
-      service: dnsmasq
-    depends_on:
-      - traefik
+  # 儲存層
+  - path: ./storage/postgres/docker-compose.yml
+  - path: ./storage/redis/docker-compose.yml
 
-  # === 儲存層 ===
-  postgres:
-    extends:
-      file: ./storage/postgres/docker-compose.yml
-      service: postgres
-    depends_on:
-      - traefik
-
-  pgadmin:
-    extends:
-      file: ./storage/postgres/docker-compose.yml
-      service: pgadmin
-    depends_on:
-      - postgres
-
-  redis:
-    extends:
-      file: ./storage/redis/docker-compose.yml
-      service: redis
-    depends_on:
-      - traefik
-
-  redis-commander:
-    extends:
-      file: ./storage/redis/docker-compose.yml
-      service: redis-commander
-    depends_on:
-      - redis
-
-  # === 安全層 ===
-  keycloak:
-    extends:
-      file: ./security/keycloak/docker-compose.yml
-      service: keycloak
-    depends_on:
-      - postgres
-      - traefik
-
-networks:
-  default:
-    external: true
-    name: ${DEFAULT_NETWORK:-devops}
-
-volumes:
-  # Network layer
-  letsencrypt:
-    name: letsencrypt
-
-  # Storage layer
-  postgres_data:
-    name: postgres_data
-  pgadmin_data:
-    name: pgadmin_data
-  redis_data:
-    name: redis_data
-
-  # Security layer
-  keycloak_data:
-    name: keycloak_data
+  # 安全層
+  - path: ./security/keycloak/docker-compose.yml

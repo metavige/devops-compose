@@ -1,5 +1,3 @@
-version: '3.8'
-
 # Infrastructure Network Layer
 # 此層包含所有網路相關的基礎設施服務
 

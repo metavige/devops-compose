@@ -1,4 +1,7 @@
-version: '3.8'
+
+
+# Traefik 反向代理服務 - 自包含配置
+# 可以獨立啟動: docker-compose up -d
 
 services:
   traefik:
@@ -14,7 +17,7 @@ services:
 
       # API & Dashboard 配置
       - '--api.dashboard=true'
-      - '--api.insecure=${TRAEFIK_API_INSECURE:-false}'
+      - '--api.insecure=${TRAEFIK_API_INSECURE:-true}'
 
       # Provider 配置
       - '--providers.docker=true'
@@ -26,25 +29,30 @@ services:
       # EntryPoints 配置
       - '--entrypoints.web.address=:80'
       - '--entrypoints.websecure.address=:443'
-      - '--entrypoints.mysql.address=:3306/tcp'
-      - '--entrypoints.postgres.address=:5432/tcp'
 
-      # Let's Encrypt (可選)
-      - '--certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL:-admin@example.com}'
-      - '--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json'
-      - '--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web'
+      # # For 非 HTTP 服務
+      # - '--entrypoints.mysql.address=:3306/tcp'
+      # - '--entrypoints.postgres.address=:5432/tcp'
 
-      # 監控
-      - '--metrics.prometheus=true'
-      - '--metrics.prometheus.addEntryPointsLabels=true'
-      - '--metrics.prometheus.addServicesLabels=true'
+      # # Let's Encrypt (可選)
+      # - '--certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL:-admin@example.com}'
+      # - '--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json'
+      # - '--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web'
+
+      # # 監控
+      # - '--metrics.prometheus=true'
+      # - '--metrics.prometheus.addEntryPointsLabels=true'
+      # - '--metrics.prometheus.addServicesLabels=true'
 
     labels:
+      # Dashboard 設定
       - 'traefik.enable=true'
-      - 'traefik.http.routers.traefik.rule=Host(`traefik.${MY_DOMAIN:-docker.internal}`)'
-      - 'traefik.http.routers.traefik.entrypoints=websecure'
       - 'traefik.http.routers.traefik.tls=true'
-      - 'traefik.http.routers.traefik.service=api@internal'
+      - 'traefik.http.routers.traefik.rule=Host(`traefik.${MY_DOMAIN:-docker.internal}`)'
+      - 'traefik.http.routers.traefik_dashboard.entrypoints=websecure'
+      - 'traefik.http.routers.traefik_dashboard.service=dashboard@internal'
+      # - 'traefik.http.services.traefik_dashboard.loadbalancer.server.port=8080'
+      # - 'traefik.http.routers.traefik.priority=100'
 
       # HTTPS 重導向中間件
       - 'traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https'
@@ -52,19 +60,12 @@ services:
       - 'traefik.http.routers.http-catchall.entrypoints=web'
       - 'traefik.http.routers.http-catchall.middlewares=redirect-to-https@docker'
 
-      # 安全中間件
-      - 'traefik.http.middlewares.secure-headers.headers.accesscontrolallowmethods=GET,OPTIONS,PUT'
-      - 'traefik.http.middlewares.secure-headers.headers.accesscontrolalloworiginlist=*'
-      - 'traefik.http.middlewares.secure-headers.headers.accesscontrolmaxage=100'
-      - 'traefik.http.middlewares.secure-headers.headers.addvaryheader=true'
-      - 'traefik.http.middlewares.secure-headers.headers.referrerpolicy=same-origin'
-      - 'traefik.http.middlewares.secure-headers.headers.hostsproxyheaders=X-Forwarded-Host'
-
     ports:
       - '80:80'
       - '443:443'
-      - '3306:3306'   # MySQL
-      - '5432:5432'   # PostgreSQL
+      - '8080:8080' # Traefik Dashboard
+      # - '3306:3306'   # MySQL
+      # - '5432:5432'   # PostgreSQL
 
     volumes:
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
@@ -72,7 +73,7 @@ services:
       - './certs:/certs:ro'
       - './conf:/etc/traefik/dynamic_conf:ro'
       - './logs:/var/log/traefik'
-      - 'letsencrypt:/letsencrypt'
+      # - 'letsencrypt:/letsencrypt'
 
     healthcheck:
       test: ["CMD", "traefik", "healthcheck", "--ping"]
@@ -100,5 +101,12 @@ services:
       - 'traefik.http.routers.whoami.tls=true'
       - 'traefik.http.services.whoami.loadbalancer.server.port=80'
 
-volumes:
-  letsencrypt:
+# volumes:
+#   letsencrypt:
+#     external: true
+#     name: letsencrypt
+
+networks:
+  default:
+    external: true
+    name: ${DEFAULT_NETWORK:-devops}

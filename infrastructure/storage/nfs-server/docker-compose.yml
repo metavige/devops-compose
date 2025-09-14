@@ -1,4 +1,4 @@
-version: '3'
+
 services:
   # reference https://hub.docker.com/r/itsthenetwork/nfs-server-alpine
   nfs:
