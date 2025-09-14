@@ -1,0 +1,8 @@
+version: 0.1
+proxy:
+  remoteurl: https://registry-1.docker.io
+storage:
+  filesystem:
+    rootdirectory: /var/lib/registry
+http:
+  addr: :5000

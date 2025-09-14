@@ -1,0 +1,85 @@
+version: '3.8'
+
+# 核心基礎服務 - 必須首先啟動
+# 提供網路代理和 Docker registry mirror 功能
+
+networks:
+  devops:
+    name: ${DEFAULT_NETWORK:-devops}
+    external: true
+
+services:
+  # Traefik 反向代理
+  traefik:
+    image: 'traefik:${TRAEFIK_VERSION:-v3.5}'
+    restart: unless-stopped
+    command:
+      - '--log.level=INFO'
+      - '--global.checkNewVersion=true'
+      - '--providers.docker=true'
+      - '--providers.docker.exposedbydefault=true'
+      - '--entrypoints.web.address=:80'
+      - '--entrypoints.websecure.address=:443'
+      - '--entrypoints.mysql.address=:3306/tcp'
+      - '--entrypoints.postgres.address=:5432/tcp'
+      - '--api.insecure=true'
+      - '--api.dashboard=true'
+      - '--providers.file.directory=/etc/traefik/dynamic_conf'
+      - '--providers.docker.defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.docker.internal`)'
+    labels:
+      - 'traefik.http.routers.traefik.tls=true'
+      - 'traefik.http.routers.traefik.rule=Host(`traefik.$MY_DOMAIN`)'
+      - 'traefik.http.routers.traefik.entrypoints=websecure'
+      - 'traefik.http.routers.traefik.service=api@internal'
+      - 'traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https'
+      - 'traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)'
+      - 'traefik.http.routers.http-catchall.entrypoints=web'
+      - 'traefik.http.routers.http-catchall.middlewares=redirect-to-https@docker'
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+      - '/etc/localtime:/etc/localtime:ro'
+      - '../infrastructure/network/traefik/certs:/certs'
+      - '../infrastructure/network/traefik/conf:/etc/traefik/dynamic_conf:ro'
+      - '../infrastructure/network/traefik/logs:/var/log/traefik'
+    networks:
+      - devops
+
+  # Docker Registry Mirror
+  registry:
+    image: registry:2.8
+    restart: unless-stopped
+    volumes:
+      - '../infrastructure/docker/registry/config.yml:/etc/docker/registry/config.yml'
+      - '../infrastructure/docker/registry/data:/var/lib/registry'
+    networks:
+      - devops
+
+  # Registry Nginx 代理
+  registry-nginx:
+    image: nginx:stable
+    restart: unless-stopped
+    hostname: registry.docker.internal
+    volumes:
+      - '../infrastructure/docker/registry/nginx/nginx.conf:/etc/nginx/nginx.conf'
+    labels:
+      - 'traefik.http.routers.registry.tls=true'
+      - 'traefik.http.routers.registry.rule=Host(`registry.$MY_DOMAIN`)'
+      - 'traefik.http.routers.registry.entrypoints=websecure'
+      - 'traefik.http.services.registry.loadbalancer.server.port=80'
+    networks:
+      - devops
+    depends_on:
+      - registry
+
+  # Whoami 測試服務
+  whoami:
+    image: traefik/whoami
+    restart: unless-stopped
+    labels:
+      - 'traefik.http.routers.whoami.entrypoints=websecure'
+      - 'traefik.http.routers.whoami.tls=true'
+    networks:
+      - devops
