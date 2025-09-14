@@ -1,8 +1,0 @@
-version: '3'
-services:
-  server:
-    image: redis:6-alpine
-    labels:
-      - "traefik.tcp.routers.redis.rule=HostSNI('redis.$MY_DOMAIN')"
-      # - 'traefik.tcp.routers.redis.service=redisport'
-      - 'traefik.tcp.services.redis.loadbalancer.server.port=6379'

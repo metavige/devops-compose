@@ -1,0 +1,17 @@
+
+
+# Infrastructure 完整堆疊 - 使用 include 方式
+# 便利工具：可以一次啟動所有基礎設施服務
+# 實際配置都在各自的服務目錄中
+
+include:
+  # 網路層
+  - path: ./network/traefik/docker-compose.yml
+  - path: ./network/dnsmasq/docker-compose.yml
+
+  # 儲存層
+  - path: ./storage/postgres/docker-compose.yml
+  - path: ./storage/redis/docker-compose.yml
+
+  # 安全層
+  - path: ./security/keycloak/docker-compose.yml

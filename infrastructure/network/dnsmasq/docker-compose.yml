@@ -1,0 +1,36 @@
+
+
+services:
+  dnsmasq:
+    image: jpillora/dnsmasq:${DNSMASQ_VERSION:-latest}
+    container_name: dnsmasq
+    restart: unless-stopped
+    ports:
+      - "53:53/udp"     # DNS UDP
+      - "53:53/tcp"     # DNS TCP
+    volumes:
+      - ./dnsmasq.conf:/etc/dnsmasq.conf:ro
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - 'HTTP_USER=${DNSMASQ_USER:-admin}'
+      - 'HTTP_PASS=${DNSMASQ_PASS:-admin}'
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.dnsmasq.rule=Host(`dnsmasq.${MY_DOMAIN:-docker.internal}`)'
+      - 'traefik.http.routers.dnsmasq.entrypoints=websecure'
+      - 'traefik.http.routers.dnsmasq.tls=true'
+      - 'traefik.http.services.dnsmasq.loadbalancer.server.port=8080'
+      # 加入基本認證保護
+      - 'traefik.http.routers.dnsmasq.middlewares=basic-auth@file'
+
+    healthcheck:
+      test: ["CMD", "nslookup", "docker.internal", "127.0.0.1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.25'

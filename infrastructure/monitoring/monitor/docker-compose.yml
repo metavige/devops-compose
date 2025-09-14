@@ -1,0 +1,20 @@
+
+services:
+  cadvisor:
+    image: gcr.io/google-containers/cadvisor:latest
+    container_name: cadvisor
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      # - /var/run/docker.sock:/private/var/run/docker.sock:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+    devices:
+      - /dev/kmsg
+    labels:
+      - 'traefik.http.routers.cadvisor.entrypoints=websecure'
+      - 'traefik.http.routers.cadvisor.tls=true'
+      - 'traefik.http.routers.cadvisor.rule=hostregexp(`cadvisor.$MY_DOMAIN`)'
+      - 'traefik.http.services.cadvisor.loadbalancer.server.port=8080'

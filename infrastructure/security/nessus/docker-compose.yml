@@ -1,0 +1,21 @@
+
+services:
+  nessus:
+    image: tenableofficial/nessus
+    environment:
+      - 'ACTIVATION_CODE=${ACTIVATION_CODE}'
+      - 'USERNAME=user'
+      - 'PASSWORD=user'
+      # - "AUTO_UPDATE=no"
+    hostname: '${HOSTNAME}'
+    ports:
+      - 8834:8834
+    volumes:
+      - ./certs:/opt/nessus/com/nessus/CA
+    labels:
+      - 'traefik.tcp.routers.nessus.tls=true'
+      - 'traefik.tcp.routers.nessus.rule=HostSNI(`${HOSTNAME}`)'
+      - 'traefik.tcp.routers.nessus.entrypoints=websecure'
+      - 'traefik.tcp.routers.nessus.tls.passthrough=true'
+      - 'traefik.tcp.services.nessus.loadbalancer.server.port=8834'
+      # - "traefik.tcp.services.nessus.loadbalancer.server.scheme=https"

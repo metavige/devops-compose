@@ -1,0 +1,100 @@
+
+
+# Keycloak 身份認證服務 - 自包含配置
+# 可以獨立啟動: docker-compose up -d
+
+services:
+  keycloak:
+    image: keycloak/keycloak:${KEYCLOAK_VERSION:-26.3.0}
+    container_name: keycloak
+    restart: unless-stopped
+    environment:
+      # 管理員帳號設定
+      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN:-admin}
+      - KEYCLOAK_ADMIN_PASSWORD_FILE=/run/secrets/keycloak_admin_password
+
+      # 資料庫設定
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://postgres:5432/${KEYCLOAK_DB:-keycloak}
+      - KC_DB_USERNAME=${KEYCLOAK_DB_USER:-keycloak}
+      - KC_DB_PASSWORD_FILE=/run/secrets/keycloak_db_password
+
+      # 網路和代理設定
+      - KC_HOSTNAME=keycloak.${MY_DOMAIN:-docker.internal}
+      - KC_HOSTNAME_STRICT=false
+      - KC_PROXY_HEADERS=xforwarded
+      - PROXY_ADDRESS_FORWARDING=true
+
+      # 安全設定
+      - KC_HEALTH_ENABLED=true
+      - KC_METRICS_ENABLED=true
+      - KC_HTTP_ENABLED=true
+      - KC_HOSTNAME_STRICT_HTTPS=false
+
+      # 效能設定
+      - JAVA_OPTS_APPEND="-Xms1g -Xmx2g -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m"
+
+    secrets:
+      - keycloak_admin_password
+      - keycloak_db_password
+
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+      - ./themes:/opt/keycloak/themes:ro
+      - /etc/localtime:/etc/localtime:ro
+
+    command:
+      - start
+      - --auto-build
+      - --db=postgres
+      - --hostname-strict=false
+      - --proxy-headers=xforwarded
+      - --http-enabled=true
+
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.keycloak.rule=Host(`keycloak.${MY_DOMAIN:-docker.internal}`)'
+      - 'traefik.http.routers.keycloak.entrypoints=websecure'
+      - 'traefik.http.routers.keycloak.tls=true'
+      - 'traefik.http.services.keycloak.loadbalancer.server.port=8080'
+      # Session stickiness
+      - 'traefik.http.services.keycloak.loadbalancer.sticky.cookie.name=keycloak_sticky'
+      - 'traefik.http.services.keycloak.loadbalancer.sticky.cookie.secure=true'
+      - 'traefik.http.services.keycloak.loadbalancer.sticky.cookie.httpOnly=true'
+      # 安全標頭
+      - 'traefik.http.routers.keycloak.middlewares=security-headers@file'
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health/ready || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+    deploy:
+      resources:
+        limits:
+          memory: 3G
+          cpus: '2.0'
+        reservations:
+          memory: 1G
+          cpus: '1.0'
+
+    external_links:
+      - "postgres:postgres"
+
+secrets:
+  keycloak_admin_password:
+    file: ./secrets/keycloak_admin_password.txt
+  keycloak_db_password:
+    file: ./secrets/keycloak_db_password.txt
+
+volumes:
+  keycloak_data:
+    external: true
+    name: keycloak_data
+
+networks:
+  default:
+    external: true
+    name: ${DEFAULT_NETWORK:-devops}
