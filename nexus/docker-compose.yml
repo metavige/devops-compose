@@ -7,8 +7,7 @@ services:
     # environment:
     #   INSTALL4J_ADD_VM_PARAMS: -Xms2g -Xmx2g -XX:MaxDirectMemorySize=3g
     volumes:
-      - nexus-data:/nexus-data
-      # - nexus-blob:/nexus-data/blobs
+      - ${PWD}/data:/nexus-data
   nginx:
     image: nginx:stable
     hostname: nexus.docker.internal
@@ -21,7 +20,4 @@ services:
       - 'traefik.http.routers.nexus.rule=Host(`nexus.$MY_DOMAIN`)'
       - 'traefik.http.routers.nexus.entrypoints=websecure'
       - 'traefik.http.services.nexus.loadbalancer.server.port=80'
-
-volumes:
-  nexus-data: {}
-  nexus-blob: {}
+ 
