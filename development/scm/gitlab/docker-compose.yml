@@ -3,10 +3,10 @@ services:
   gitlab:
     image: gitlab/gitlab-ce:18.2.8-ce.0
     hostname: gitlab.docker.internal
-    ports:
+    # ports:
       # - '80:80'
       # - '8443:443'
-      - '8822:22'
+      # - '8822:22'
     environment:
       GITLAB_OMNIBUS_CONFIG: |
         from_file('/opt/omnibus_config/gitlab.rb')
@@ -27,11 +27,13 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - gitlab-runner:/etc/gitlab-runner
+      - gitlab-ssh:/root/.ssh
 
 volumes:
   gitlab-config: {}
   gitlab-data: {}
   gitlab-runner: {}
+  gitlab-ssh: {}
 
 # configs:
 #   gitlab:

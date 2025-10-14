@@ -19,4 +19,11 @@ gitlab-rake "gitlab:password:reset[root]"
 ```shell
 gitlab-runner register --url http://gitlab/ --token {token}
 ```
+### SSH
 
+```
+> ssh-keygen -t ed25519 -C "gitlab-runner"
+```
+
+- 複製 ssh key 到 gitlab 內
+- 嘗試在 gitlab-runner 內，git clone 一次專案，確認 `~/.ssh/known_hosts` 已經存在
