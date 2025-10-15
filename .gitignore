@@ -143,3 +143,5 @@ docker-compose.override.yml
 docker-compose.override.yaml
 
 .gitignore
+open-webui/cache
+open-webui/vector_db
