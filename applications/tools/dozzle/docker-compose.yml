@@ -10,7 +10,7 @@ networks:
 
 services:
   dozzle:
-    image: amir20/dozzle:latest
+    image: amir20/dozzle:v6.3.3
     restart: unless-stopped
     environment:
       - DOZZLE_LEVEL=info
