@@ -21,7 +21,9 @@ services:
       - 'traefik.http.routers.dozzle.tls=true'
       - 'traefik.http.routers.dozzle.rule=Host(`dozzle.${MY_DOMAIN:-docker.internal}`)'
       - 'traefik.http.routers.dozzle.entrypoints=websecure'
+      - 'traefik.http.routers.dozzle.middlewares=dozzle-auth'
       - 'traefik.http.services.dozzle.loadbalancer.server.port=8080'
+      - 'traefik.http.middlewares.dozzle-auth.basicauth.users=${DOZZLE_BASIC_AUTH}'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
