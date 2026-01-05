@@ -13,7 +13,7 @@ services:
     image: frooodle/s-pdf:1.0.0
     restart: unless-stopped
     environment:
-      - DOCKER_ENABLE_SECURITY=false
+      - DOCKER_ENABLE_SECURITY=${DOCKER_ENABLE_SECURITY:-true}
       - INSTALL_BOOK_AND_ADVANCED_HTML_OPS=false
       - LANGS=zh_TW
     labels:
