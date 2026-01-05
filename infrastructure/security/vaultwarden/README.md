@@ -21,7 +21,7 @@ cp .env.example .env
 
 # 編輯 .env 檔案，至少設定以下項目：
 # - VAULTWARDEN_ADMIN_TOKEN (管理員令牌)
-# - SMTP_* (郵件設定，可選)
+# - VAULTWARDEN_SMTP_* (郵件設定，可選)
 ```
 
 ### 2. 生成管理員令牌
@@ -114,8 +114,8 @@ docker compose restart vaultwarden
 
 ```bash
 # 1. 設定備份相關環境變數（.env 檔案）
-RCLONE_REMOTE_NAME=local
-RCLONE_REMOTE_DIR=/backup
+VAULTWARDEN_RCLONE_REMOTE_NAME=local
+VAULTWARDEN_RCLONE_REMOTE_DIR=/backup
 VAULTWARDEN_BACKUP_CRON=0 2 * * *  # 每天凌晨 2 點
 VAULTWARDEN_BACKUP_PASSWORD=your_secure_password
 VAULTWARDEN_BACKUP_KEEP_DAYS=30
@@ -203,29 +203,29 @@ docker compose exec vaultwarden-backup rclone config
 
 # 2. 按照提示配置遠端儲存（如 Google Drive, S3, Dropbox 等）
 
-# 3. 更新 .env 中的 RCLONE_REMOTE_NAME
+# 3. 更新 .env 中的 VAULTWARDEN_RCLONE_REMOTE_NAME
 ```
 
 ### SMTP 郵件設定範例
 
 **Gmail**
 ```env
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_SECURITY=starttls
-SMTP_USERNAME=your-email@gmail.com
-SMTP_PASSWORD=your-app-password
-SMTP_FROM=your-email@gmail.com
+VAULTWARDEN_SMTP_HOST=smtp.gmail.com
+VAULTWARDEN_SMTP_PORT=587
+VAULTWARDEN_SMTP_SECURITY=starttls
+VAULTWARDEN_SMTP_USERNAME=your-email@gmail.com
+VAULTWARDEN_SMTP_PASSWORD=your-app-password
+VAULTWARDEN_SMTP_FROM=your-email@gmail.com
 ```
 
 **Office 365**
 ```env
-SMTP_HOST=smtp.office365.com
-SMTP_PORT=587
-SMTP_SECURITY=starttls
-SMTP_USERNAME=your-email@outlook.com
-SMTP_PASSWORD=your-password
-SMTP_FROM=your-email@outlook.com
+VAULTWARDEN_SMTP_HOST=smtp.office365.com
+VAULTWARDEN_SMTP_PORT=587
+VAULTWARDEN_SMTP_SECURITY=starttls
+VAULTWARDEN_SMTP_USERNAME=your-email@outlook.com
+VAULTWARDEN_SMTP_PASSWORD=your-password
+VAULTWARDEN_SMTP_FROM=your-email@outlook.com
 ```
 
 ## 常見問題
