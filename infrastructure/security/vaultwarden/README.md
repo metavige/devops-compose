@@ -130,8 +130,8 @@ docker compose --profile backup up -d
 # 備份資料目錄
 docker compose exec vaultwarden sqlite3 /data/db.sqlite3 ".backup '/data/backup/manual-backup.sqlite3'"
 
-# 或直接複製整個 data 目錄
-docker compose exec vaultwarden tar czf /data/backup/manual-full-backup.tar.gz /data
+# 或直接複製整個 data 目錄到備份卷
+docker compose exec vaultwarden tar czf /backup/manual-full-backup.tar.gz /data
 ```
 
 ### 還原備份
