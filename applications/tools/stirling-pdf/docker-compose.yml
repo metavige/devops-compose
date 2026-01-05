@@ -10,7 +10,7 @@ networks:
 
 services:
   stirling-pdf:
-    image: frooodle/s-pdf:latest
+    image: frooodle/s-pdf:1.0.0
     restart: unless-stopped
     environment:
       - DOCKER_ENABLE_SECURITY=false
