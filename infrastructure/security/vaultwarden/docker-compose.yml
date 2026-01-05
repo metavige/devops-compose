@@ -85,7 +85,7 @@ services:
 
   # Vaultwarden Backup - 自動備份服務 (可選)
   vaultwarden-backup:
-    image: ttionya/vaultwarden-backup:latest
+    image: ttionya/vaultwarden-backup:1.0.0
     container_name: vaultwarden-backup
     restart: unless-stopped
     environment:
