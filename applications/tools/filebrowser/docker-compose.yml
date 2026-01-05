@@ -10,7 +10,7 @@ networks:
 
 services:
   filebrowser:
-    image: filebrowser/filebrowser:latest
+    image: filebrowser/filebrowser:v2.30.0
     restart: unless-stopped
     environment:
       - PUID=1000
