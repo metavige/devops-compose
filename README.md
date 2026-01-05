@@ -63,7 +63,7 @@ devops-compose/
 │   └── docker-compose.yml # 核心服務整合
 ├── infrastructure/         # 基礎設施層
 │   ├── storage/           # PostgreSQL, Redis, MySQL
-│   ├── security/          # Keycloak, 安全服務
+│   ├── security/          # Keycloak, Vaultwarden, 安全服務
 │   └── monitoring/        # 監控和日誌
 ├── platform/              # 平台層
 │   ├── harbor2/           # 容器鏡像倉庫
@@ -73,6 +73,7 @@ devops-compose/
 │   ├── cicd/             # Jenkins
 │   └── quality/          # Nexus, SonarQube
 └── applications/         # 業務應用
+    ├── tools/            # 實用工具 (Dozzle, PDF, Excalidraw, FileBrowser, IT-Tools)
     └── various-apps/     # 各種應用服務
 ```
 
@@ -147,6 +148,12 @@ task logs infrastructure/storage/postgres
 | Harbor | https://harbor.docker.internal | 容器鏡像倉庫 |
 | Nexus | https://nexus.docker.internal | 制品管理 |
 | PostgreSQL | postgres://postgres.docker.internal:5432 | 資料庫 |
+| Vaultwarden | https://vault.docker.internal | 自託管密碼管理器 |
+| Dozzle | https://dozzle.docker.internal | 容器日誌監控 |
+| Stirling PDF | https://pdf.docker.internal | PDF 處理工具 |
+| Excalidraw | https://draw.docker.internal | 手繪風格白板 |
+| FileBrowser | https://files.docker.internal | 網頁檔案管理器 |
+| IT-Tools | https://tools.docker.internal | 開發者工具集 |
 
 ## 📦 Docker Registry Mirror
 

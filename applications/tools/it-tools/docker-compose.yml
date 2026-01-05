@@ -1,0 +1,22 @@
+version: '3.8'
+
+# IT-Tools - 開發者工具集合
+# 提供 JSON 格式化、密碼生成、時間戳轉換等各種實用工具
+
+networks:
+  devops:
+    name: ${DEFAULT_NETWORK:-devops}
+    external: true
+
+services:
+  it-tools:
+    image: corentinth/it-tools:latest
+    restart: unless-stopped
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.it-tools.tls=true'
+      - 'traefik.http.routers.it-tools.rule=Host(`tools.${MY_DOMAIN:-docker.internal}`)'
+      - 'traefik.http.routers.it-tools.entrypoints=websecure'
+      - 'traefik.http.services.it-tools.loadbalancer.server.port=80'
+    networks:
+      - devops

@@ -1,0 +1,24 @@
+version: '3.8'
+
+# Excalidraw - 手繪風格白板工具
+# 提供輕量級的視覺化繪圖和腦力激盪功能
+
+networks:
+  devops:
+    name: ${DEFAULT_NETWORK:-devops}
+    external: true
+
+services:
+  excalidraw:
+    image: excalidraw/excalidraw:0.17.5
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.excalidraw.tls=true'
+      - 'traefik.http.routers.excalidraw.rule=Host(`draw.${MY_DOMAIN:-docker.internal}`)'
+      - 'traefik.http.routers.excalidraw.entrypoints=websecure'
+      - 'traefik.http.services.excalidraw.loadbalancer.server.port=80'
+    networks:
+      - devops

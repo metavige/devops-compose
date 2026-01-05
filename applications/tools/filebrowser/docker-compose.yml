@@ -1,0 +1,34 @@
+version: '3.8'
+
+# FileBrowser - 網頁檔案管理器
+# 提供類似 Google Drive 的檔案管理介面，支援拖放、編輯、分享等功能
+
+networks:
+  devops:
+    name: ${DEFAULT_NETWORK:-devops}
+    external: true
+
+services:
+  filebrowser:
+    image: filebrowser/filebrowser:v2.30.0
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.filebrowser.tls=true'
+      - 'traefik.http.routers.filebrowser.rule=Host(`files.${MY_DOMAIN:-docker.internal}`)'
+      - 'traefik.http.routers.filebrowser.entrypoints=websecure'
+      - 'traefik.http.services.filebrowser.loadbalancer.server.port=80'
+    volumes:
+      - ./config:/config
+      - ./database:/database
+      # 掛載你想管理的目錄，例如：
+      - ${HOME}/Documents:/srv/documents
+      - ${HOME}/Downloads:/srv/downloads
+    command:
+      - --database=/database/filebrowser.db
+      - --root=/srv
+    networks:
+      - devops
