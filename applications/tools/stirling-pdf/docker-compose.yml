@@ -1,0 +1,30 @@
+version: '3.8'
+
+# Stirling PDF - 自託管 PDF 處理工具
+# 提供 PDF 轉換、合併、壓縮、加浮水印等功能
+
+networks:
+  devops:
+    name: ${DEFAULT_NETWORK:-devops}
+    external: true
+
+services:
+  stirling-pdf:
+    image: frooodle/s-pdf:latest
+    restart: unless-stopped
+    environment:
+      - DOCKER_ENABLE_SECURITY=false
+      - INSTALL_BOOK_AND_ADVANCED_HTML_OPS=false
+      - LANGS=zh_TW
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.stirling-pdf.tls=true'
+      - 'traefik.http.routers.stirling-pdf.rule=Host(`pdf.${MY_DOMAIN:-docker.internal}`)'
+      - 'traefik.http.routers.stirling-pdf.entrypoints=websecure'
+      - 'traefik.http.services.stirling-pdf.loadbalancer.server.port=8080'
+    volumes:
+      - ./data:/usr/share/tessdata:rw
+      - ./configs:/configs:rw
+      - ./logs:/logs:rw
+    networks:
+      - devops

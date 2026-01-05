@@ -1,0 +1,126 @@
+version: '3.8'
+
+# Vaultwarden - 輕量級自託管密碼管理器 (Bitwarden 相容)
+# 極低資源消耗，支援所有 Bitwarden 客戶端
+
+networks:
+  devops:
+    name: ${DEFAULT_NETWORK:-devops}
+    external: true
+
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: unless-stopped
+    environment:
+      # 基礎設定
+      - DOMAIN=https://vault.${MY_DOMAIN:-docker.internal}
+      - SIGNUPS_ALLOWED=${VAULTWARDEN_SIGNUPS_ALLOWED:-true}
+      - INVITATIONS_ALLOWED=${VAULTWARDEN_INVITATIONS_ALLOWED:-true}
+      - SHOW_PASSWORD_HINT=${VAULTWARDEN_SHOW_PASSWORD_HINT:-false}
+
+      # 管理員設定 (設定後可訪問 /admin 管理介面)
+      # 使用 `docker exec -it vaultwarden /vaultwarden hash` 生成密碼雜湊
+      - ADMIN_TOKEN=${VAULTWARDEN_ADMIN_TOKEN:-}
+
+      # SMTP 郵件設定 (用於邀請和密碼提示)
+      - SMTP_HOST=${SMTP_HOST:-}
+      - SMTP_FROM=${SMTP_FROM:-}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_SECURITY=${SMTP_SECURITY:-starttls}
+      - SMTP_USERNAME=${SMTP_USERNAME:-}
+      - SMTP_PASSWORD=${SMTP_PASSWORD:-}
+
+      # 資料庫設定 (預設使用 SQLite)
+      # 如需使用 PostgreSQL，取消下方註解並配置
+      # - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/vaultwarden
+
+      # 安全性增強
+      - PASSWORD_ITERATIONS=${VAULTWARDEN_PASSWORD_ITERATIONS:-600000}
+      - LOGIN_RATELIMIT_SECONDS=60
+      - LOGIN_RATELIMIT_MAX_BURST=10
+
+      # 進階功能
+      - WEBSOCKET_ENABLED=true
+      - WEB_VAULT_ENABLED=true
+      - EXTENDED_LOGGING=true
+      - LOG_LEVEL=info
+
+      # 時區設定
+      - TZ=${TZ:-Asia/Taipei}
+
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.vaultwarden.rule=Host(`vault.${MY_DOMAIN:-docker.internal}`)'
+      - 'traefik.http.routers.vaultwarden.entrypoints=websecure'
+      - 'traefik.http.routers.vaultwarden.tls=true'
+      - 'traefik.http.services.vaultwarden.loadbalancer.server.port=80'
+
+      # WebSocket 支援
+      - 'traefik.http.routers.vaultwarden-ws.rule=Host(`vault.${MY_DOMAIN:-docker.internal}`) && Path(`/notifications/hub`)'
+      - 'traefik.http.routers.vaultwarden-ws.entrypoints=websecure'
+      - 'traefik.http.routers.vaultwarden-ws.tls=true'
+      - 'traefik.http.routers.vaultwarden-ws.service=vaultwarden-ws'
+      - 'traefik.http.services.vaultwarden-ws.loadbalancer.server.port=3012'
+
+      # 安全標頭
+      - 'traefik.http.middlewares.vaultwarden-security.headers.customFrameOptionsValue=SAMEORIGIN'
+      - 'traefik.http.middlewares.vaultwarden-security.headers.contentSecurityPolicy=frame-ancestors ''self'''
+      - 'traefik.http.routers.vaultwarden.middlewares=vaultwarden-security'
+
+    volumes:
+      - vaultwarden_data:/data
+      - /etc/localtime:/etc/localtime:ro
+
+    networks:
+      - devops
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/alive"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Vaultwarden Backup - 自動備份服務 (可選)
+  vaultwarden-backup:
+    image: ttionya/vaultwarden-backup:latest
+    container_name: vaultwarden-backup
+    restart: unless-stopped
+    environment:
+      # 備份設定
+      - RCLONE_REMOTE_NAME=${RCLONE_REMOTE_NAME:-local}
+      - RCLONE_REMOTE_DIR=${RCLONE_REMOTE_DIR:-/backup}
+      - CRON=${VAULTWARDEN_BACKUP_CRON:-0 2 * * *}
+      - ZIP_ENABLE=TRUE
+      - ZIP_PASSWORD=${VAULTWARDEN_BACKUP_PASSWORD:-}
+      - BACKUP_KEEP_DAYS=${VAULTWARDEN_BACKUP_KEEP_DAYS:-30}
+      - BACKUP_FILE_DATE_SUFFIX=%Y%m%d
+      - TIMEZONE=${TZ:-Asia/Taipei}
+
+      # 通知設定 (可選)
+      # - MAIL_SMTP_ENABLE=FALSE
+      # - MAIL_TO=
+      # - MAIL_WHEN_SUCCESS=TRUE
+      # - MAIL_WHEN_FAILURE=TRUE
+
+    volumes:
+      - vaultwarden_data:/bitwarden/data:ro
+      - ./backup:/backup
+      - ./rclone:/config
+      - /etc/localtime:/etc/localtime:ro
+
+    depends_on:
+      - vaultwarden
+
+    networks:
+      - devops
+
+    # 如果不需要自動備份，可以註解掉整個 vaultwarden-backup 服務
+    profiles:
+      - backup
+
+volumes:
+  vaultwarden_data:
+    driver: local

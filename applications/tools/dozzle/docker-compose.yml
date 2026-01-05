@@ -1,0 +1,28 @@
+version: '3.8'
+
+# Dozzle - 輕量級容器日誌監控工具
+# 提供即時日誌串流、搜尋和過濾功能
+
+networks:
+  devops:
+    name: ${DEFAULT_NETWORK:-devops}
+    external: true
+
+services:
+  dozzle:
+    image: amir20/dozzle:latest
+    restart: unless-stopped
+    environment:
+      - DOZZLE_LEVEL=info
+      - DOZZLE_TAILSIZE=300
+      - DOZZLE_FILTER=status=running
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.dozzle.tls=true'
+      - 'traefik.http.routers.dozzle.rule=Host(`dozzle.${MY_DOMAIN:-docker.internal}`)'
+      - 'traefik.http.routers.dozzle.entrypoints=websecure'
+      - 'traefik.http.services.dozzle.loadbalancer.server.port=8080'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - devops
