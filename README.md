@@ -71,7 +71,7 @@ devops-compose/
 ├── development/           # 開發工具鏈
 │   ├── scm/              # GitLab, Gitea
 │   ├── cicd/             # Jenkins
-│   └── quality/          # Nexus, SonarQube
+│   └── quality/          # Nexus, SonarQube, Trivy
 └── applications/         # 業務應用
     ├── tools/            # 實用工具 (Dozzle, PDF, Excalidraw, FileBrowser, IT-Tools)
     └── various-apps/     # 各種應用服務
@@ -147,6 +147,7 @@ task logs infrastructure/storage/postgres
 | GitLab | https://gitlab.docker.internal | Git 平台 |
 | Harbor | https://harbor.docker.internal | 容器鏡像倉庫 |
 | Nexus | https://nexus.docker.internal | 制品管理 |
+| Trivy | https://trivy.docker.internal | 容器安全掃描 |
 | PostgreSQL | postgres://postgres.docker.internal:5432 | 資料庫 |
 | Vaultwarden | https://vault.docker.internal | 自託管密碼管理器 |
 | Dozzle | https://dozzle.docker.internal | 容器日誌監控 |

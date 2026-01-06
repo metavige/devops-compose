@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  trivy:
+    image: aquasec/trivy:latest
+    container_name: trivy
+    command: server --listen 0.0.0.0:8080
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./cache:/root/.cache/trivy
+      - /var/run/docker.sock:/var/run/docker.sock:ro  # 允許掃描本地容器映像
+    environment:
+      - TZ=${TZ:-Asia/Taipei}
+      - TRIVY_LISTEN=0.0.0.0:8080
+      - TRIVY_DEBUG=false
+    networks:
+      - devops
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.trivy.tls=true'
+      - 'traefik.http.routers.trivy.rule=Host(`trivy.${MY_DOMAIN:-docker.internal}`)'
+      - 'traefik.http.routers.trivy.entrypoints=websecure'
+      - 'traefik.http.services.trivy.loadbalancer.server.port=8080'
+    restart: unless-stopped
+
+networks:
+  devops:
+    external: true
