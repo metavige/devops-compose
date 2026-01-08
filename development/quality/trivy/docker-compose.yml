@@ -7,7 +7,8 @@ services:
       - "8080:8080"
     volumes:
       - ./cache:/root/.cache/trivy
-      - /var/run/docker.sock:/var/run/docker.sock:ro  # 允許掃描本地容器映像
+      # 若需掃描本地容器映像，可在開發環境中手動啟用下行設定（不建議用於生產環境）：
+      # - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       - TZ=${TZ:-Asia/Taipei}
       - TRIVY_LISTEN=0.0.0.0:8080
