@@ -34,17 +34,9 @@ docker compose up -d
 
 ### 1. 使用 API 掃描映像
 
-```bash
-# 掃描映像
-curl -X POST \
-  https://trivy.docker.internal/scan \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "image": "nginx:latest",
-    "severities": ["CRITICAL", "HIGH"]
-  }'
-```
+Trivy Server 提供 HTTP API，可由 `curl` 或其他 HTTP 客戶端呼叫。不過實際可用的端點與請求格式會隨 Trivy 版本與部署方式而異，且官方並不保證未公開的端點（例如 `/scan`）的穩定性。
 
+因此，請依照你所使用的 Trivy 版本，參考官方文件中的「Server mode / HTTP API」章節取得正確的 API path 與參數，再撰寫對應的 `curl` 請求。
 ### 2. 使用 CLI 客戶端連接 Server
 
 ```bash
