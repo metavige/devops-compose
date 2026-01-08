@@ -36,9 +36,9 @@ echo ""
 
 # 範例 1: 掃描公開映像
 echo "📦 範例 1: 掃描 nginx:latest 映像"
-echo "指令: trivy image --server http://localhost:8080 nginx:latest"
+echo "指令: trivy image --server https://trivy.docker.internal nginx:latest"
 echo ""
-trivy image --server http://localhost:8080 nginx:latest
+trivy image --server https://trivy.docker.internal nginx:latest
 
 echo ""
 echo "---"
@@ -46,9 +46,9 @@ echo ""
 
 # 範例 2: 只顯示嚴重和高危漏洞
 echo "🔴 範例 2: 只顯示 CRITICAL 和 HIGH 級別的漏洞"
-echo "指令: trivy image --server http://localhost:8080 --severity CRITICAL,HIGH nginx:latest"
+echo "指令: trivy image --server https://trivy.docker.internal --severity CRITICAL,HIGH nginx:latest"
 echo ""
-trivy image --server http://localhost:8080 --severity CRITICAL,HIGH nginx:latest
+trivy image --server https://trivy.docker.internal --severity CRITICAL,HIGH nginx:latest
 
 echo ""
 echo "---"
@@ -56,9 +56,9 @@ echo ""
 
 # 範例 3: 輸出為 JSON 格式
 echo "📄 範例 3: 輸出為 JSON 格式"
-echo "指令: trivy image --server http://localhost:8080 --format json nginx:latest"
+echo "指令: trivy image --server https://trivy.docker.internal --format json nginx:latest"
 echo ""
-trivy image --server http://localhost:8080 --format json --quiet nginx:latest | jq '.Results[0].Vulnerabilities | length' | xargs -I {} echo "找到 {} 個漏洞"
+trivy image --server https://trivy.docker.internal --format json --quiet nginx:latest | jq '.Results[0].Vulnerabilities | length' | xargs -I {} echo "找到 {} 個漏洞"
 
 echo ""
 echo "✅ 掃描完成！"
