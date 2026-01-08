@@ -43,20 +43,20 @@ Trivy Server 提供 HTTP API，可由 `curl` 或其他 HTTP 客戶端呼叫。�
 # 安裝 Trivy CLI（如果尚未安裝）
 brew install aquasecurity/trivy/trivy
 
-# 使用 client 模式連接到 server
-trivy image --server https://trivy.docker.internal nginx:latest
+# 使用 client 模式連接到 server（使用本地端點）
+trivy image --server http://localhost:8080 nginx:latest
 
 # 掃描本地映像
-trivy image --server https://trivy.docker.internal myapp:1.0.0
+trivy image --server http://localhost:8080 myapp:1.0.0
 
 # 掃描並輸出 JSON 格式
-trivy image --server https://trivy.docker.internal \
+trivy image --server http://localhost:8080 \
   --format json \
   --output result.json \
   nginx:latest
 
 # 只顯示嚴重和高危漏洞
-trivy image --server https://trivy.docker.internal \
+trivy image --server http://localhost:8080 \
   --severity CRITICAL,HIGH \
   nginx:latest
 ```
@@ -65,20 +65,20 @@ trivy image --server https://trivy.docker.internal \
 
 ```bash
 # 掃描專案目錄
-trivy fs --server https://trivy.docker.internal /path/to/project
+trivy fs --server http://localhost:8080 /path/to/project
 
 # 掃描 IaC 配置
-trivy config --server https://trivy.docker.internal /path/to/kubernetes
+trivy config --server http://localhost:8080 /path/to/kubernetes
 ```
 
 ### 4. 掃描 Git 儲存庫
 
 ```bash
 # 掃描遠端儲存庫
-trivy repo --server https://trivy.docker.internal https://github.com/user/repo
+trivy repo --server http://localhost:8080 https://github.com/user/repo
 
 # 掃描本地儲存庫
-trivy repo --server https://trivy.docker.internal /path/to/repo
+trivy repo --server http://localhost:8080 /path/to/repo
 ```
 
 ## 整合範例
@@ -87,11 +87,13 @@ trivy repo --server https://trivy.docker.internal /path/to/repo
 
 ```yaml
 # GitLab CI 範例
+# 注意：在 CI/CD 環境中，使用服務名稱（http://trivy:8080）而非 localhost
+# 確保 Trivy 服務與 CI runner 在同一 Docker 網路中
 security_scan:
   stage: test
   image: aquasec/trivy:latest
   script:
-    - trivy image --server https://trivy.docker.internal --exit-code 1 --severity CRITICAL $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - trivy image --server http://trivy:8080 --exit-code 1 --severity CRITICAL $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
   only:
     - merge_requests
     - main
@@ -102,7 +104,7 @@ security_scan:
 ```bash
 # 建置映像後立即掃描
 docker build -t myapp:latest .
-trivy image --server https://trivy.docker.internal myapp:latest
+trivy image --server http://localhost:8080 myapp:latest
 ```
 
 ## 設定說明
@@ -148,8 +150,12 @@ trivy/
 
 1. **首次啟動** - 第一次啟動時會下載漏洞資料庫，可能需要幾分鐘
 2. **資料庫更新** - 漏洞資料庫會定期自動更新
-3. **Docker Socket** - 服務掛載了 Docker socket，可以直接掃描本地映像
+3. **Docker Socket** - 預設未掛載 Docker socket，如需掃描本地容器映像請手動啟用 docker-compose.yml 中的對應設定
 4. **網路存取** - 需要網路連線以下載和更新漏洞資料庫
+5. **服務端點選擇**：
+   - 從主機使用 CLI：`http://localhost:8080`
+   - 從同一 Docker 網路內的容器：`http://trivy:8080`
+   - 透過 Traefik 的 HTTPS 存取（REST API）：`https://trivy.docker.internal`
 
 ## 相關連結
 
