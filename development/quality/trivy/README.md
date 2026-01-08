@@ -19,7 +19,7 @@ Trivy 是一個全面且易於使用的容器安全掃描工具，可以檢測�
 make start service=development/quality/trivy
 
 # 使用 Task
-task start development/quality/trivy
+task start:trivy
 
 # 直接使用 Docker Compose
 cd development/quality/trivy
