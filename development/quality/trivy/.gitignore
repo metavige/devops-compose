@@ -1,0 +1,8 @@
+# Trivy 快取資料
+cache/
+
+# 掃描結果
+*.json
+*.html
+*.sarif
+result.*

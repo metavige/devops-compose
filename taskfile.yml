@@ -33,6 +33,7 @@ tasks:
       - echo "  • task start:gitlab   - 啟動 GitLab"
       - echo "  • task start:jenkins  - 啟動 Jenkins"
       - echo "  • task start:nexus    - 啟動 Nexus"
+      - echo "  • task start:trivy    - 啟動 Trivy"
       - echo ""
       - echo "通用指令:"
       - echo "  • task start SERVICE  - 啟動指定服務"
@@ -103,6 +104,12 @@ tasks:
     cmds:
       - task: start
         vars: { SERVICE: "development/quality/nexus" }
+
+  start:trivy:
+    desc: 啟動 Trivy
+    cmds:
+      - task: start
+        vars: { SERVICE: "development/quality/trivy" }
 
   # 通用服務管理指令
   start:
