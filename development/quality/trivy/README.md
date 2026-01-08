@@ -87,7 +87,8 @@ trivy repo --server http://localhost:8080 /path/to/repo
 
 ```yaml
 # GitLab CI 範例
-# 注意：需根據實際環境調整 --server 參數（使用服務名稱或實際主機位址）
+# 注意：在 CI/CD 環境中，使用服務名稱（http://trivy:8080）而非 localhost
+# 確保 Trivy 服務與 CI runner 在同一 Docker 網路中
 security_scan:
   stage: test
   image: aquasec/trivy:latest
@@ -151,7 +152,10 @@ trivy/
 2. **資料庫更新** - 漏洞資料庫會定期自動更新
 3. **Docker Socket** - 預設未掛載 Docker socket，如需掃描本地容器映像請手動啟用 docker-compose.yml 中的對應設定
 4. **網路存取** - 需要網路連線以下載和更新漏洞資料庫
-5. **服務端點** - CLI 客戶端使用 `http://localhost:8080`，REST API 可透過 Traefik 使用 `https://trivy.docker.internal`
+5. **服務端點選擇**：
+   - 從主機使用 CLI：`http://localhost:8080`
+   - 從同一 Docker 網路內的容器：`http://trivy:8080`
+   - 透過 Traefik 的 HTTPS 存取（REST API）：`https://trivy.docker.internal`
 
 ## 相關連結
 
