@@ -8,6 +8,8 @@ networks:
 
 services:
   dockhand:
+    # 注意：Dockhand 目前使用 commit hash 作為版本標籤，而非語義化版本
+    # 使用 latest 可確保獲得最新穩定版本
     image: fnsys/dockhand:latest
     container_name: dockhand
     restart: unless-stopped

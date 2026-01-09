@@ -43,6 +43,7 @@ docker compose -f applications/tools/dockhand/docker-compose.yml up -d
 ### Volume 說明
 
 - `/var/run/docker.sock`: Docker socket（唯讀），用於管理 Docker
+  - **安全注意事項**: Dockhand 需要存取 Docker socket 以提供容器管理功能。雖然設定為唯讀模式，但仍可讀取容器資訊和配置。建議僅在受信任的環境中使用，並確保適當的網路隔離。
 - `/app/data`: 應用資料持久化儲存
 
 ## 技術堆疊
