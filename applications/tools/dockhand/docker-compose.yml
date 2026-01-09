@@ -1,0 +1,30 @@
+# Dockhand - 現代化 Docker 管理介面
+# 提供即時容器管理、Compose 堆疊編排和多環境支援
+
+networks:
+  devops:
+    name: ${DEFAULT_NETWORK:-devops}
+    external: true
+
+services:
+  dockhand:
+    image: fnsys/dockhand:latest
+    container_name: dockhand
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ:-Asia/Taipei}
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.dockhand.tls=true'
+      - 'traefik.http.routers.dockhand.rule=Host(`dockhand.${MY_DOMAIN:-docker.internal}`)'
+      - 'traefik.http.routers.dockhand.entrypoints=websecure'
+      - 'traefik.http.services.dockhand.loadbalancer.server.port=3000'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - dockhand_data:/app/data
+    networks:
+      - devops
+
+volumes:
+  dockhand_data:
+    driver: local
