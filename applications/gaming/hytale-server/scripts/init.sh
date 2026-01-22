@@ -27,11 +27,15 @@ fi
 MACHINE_ID_DIR="/home/hytale/.machine-id"
 mkdir -p "$MACHINE_ID_DIR"
 
-if [ ! -f "$MACHINE_ID_DIR/uuid" ]; then
+# 檢查 UUID 檔案是否存在且有內容
+if [ ! -s "$MACHINE_ID_DIR/uuid" ]; then
     LogInfo "產生持久的 machine-id 用於加密認證..."
     uuidgen > "$MACHINE_ID_DIR/uuid"
     cat "$MACHINE_ID_DIR/uuid" | tr -d '-' > "$MACHINE_ID_DIR/machine-id"
     cp "$MACHINE_ID_DIR/machine-id" "$MACHINE_ID_DIR/dbus-machine-id"
+    LogSuccess "已產生新的 machine-id: $(cat $MACHINE_ID_DIR/uuid)"
+else
+    LogInfo "使用現有的 machine-id: $(cat $MACHINE_ID_DIR/uuid)"
 fi
 
 # 連結 machine-id 檔案
