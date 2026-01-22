@@ -54,37 +54,70 @@
 
 ## 🚀 快速開始
 
-### 1. 複製環境變數範本
+### 方案 A：自動下載模式（首次使用建議）
+
+首次使用時，讓伺服器自動下載檔案：
 
 ```bash
+# 1. 複製環境變數範本
 cp .env.example .env
-```
 
-### 2. 編輯環境變數
-
-根據您的需求修改 `.env` 檔案中的設定：
-
-```bash
+# 2. 編輯 .env，確保 DOWNLOAD_ON_START=true
 # 基本設定
 SERVER_NAME=my-hytale-server
 MAX_PLAYERS=30
 MAX_MEMORY=16G
-```
+DOWNLOAD_ON_START=true  # 首次啟動自動下載
 
-### 3. 建置並啟動服務
-
-```bash
-# 建置映像檔
+# 3. 建置並啟動
 docker compose build
-
-# 啟動服務
 docker compose up -d
 
-# 查看日誌
+# 4. 查看日誌並完成認證
 docker compose logs -f hytale-server
 ```
 
-### 4. 停止服務
+### 方案 B：手動更新模式（推薦）
+
+**優勢：** 更好的控制、更快的啟動速度
+
+```bash
+# 1. 複製環境變數範本
+cp .env.example .env
+
+# 2. 編輯 .env
+DOWNLOAD_ON_START=false  # 不在啟動時下載
+
+# 3. 建置映像檔
+docker compose build
+
+# 4. 首次使用：下載伺服器檔案
+./update.sh
+# 或手動執行:
+# docker compose -f docker-compose.update.yml run --rm hytale-updater
+
+# 5. 啟動伺服器
+docker compose up -d
+
+# 6. 查看日誌
+docker compose logs -f hytale-server
+```
+
+### 更新伺服器
+
+當需要更新到新版本時：
+
+```bash
+# 使用更新腳本（推薦）
+./update.sh
+
+# 或手動更新
+docker compose down
+docker compose -f docker-compose.update.yml run --rm hytale-updater
+docker compose up -d
+```
+
+### 停止服務
 
 ```bash
 docker compose down
@@ -192,6 +225,55 @@ deploy:
     reservations:
       cpus: '4'
       memory: 4G
+```
+
+### 伺服器更新管理
+
+#### 手動更新（推薦）
+
+使用獨立的更新指令，不影響伺服器啟動速度：
+
+```bash
+# 方法 1: 使用更新腳本
+./update.sh
+
+# 方法 2: 手動執行
+docker compose down
+docker compose -f docker-compose.update.yml run --rm hytale-updater
+docker compose up -d
+```
+
+**優勢：**
+- ✅ 啟動速度快（不需等待下載檢查）
+- ✅ 可控的更新時機
+- ✅ 適合生產環境
+
+#### 自動更新模式
+
+設定 `.env` 中的 `DOWNLOAD_ON_START=true`，每次啟動時自動檢查更新：
+
+```bash
+# 編輯 .env
+DOWNLOAD_ON_START=true
+
+# 啟動時會自動檢查並下載更新
+docker compose up -d
+```
+
+**適用場景：**
+- 開發/測試環境
+- 希望始終保持最新版本
+
+#### 版本管理
+
+查看當前版本：
+
+```bash
+# 查看版本檔案
+cat hytale-data/server-files/.server-version
+
+# 或查看日誌
+docker compose logs hytale-server | grep "version"
 ```
 
 ## 📁 目錄結構
