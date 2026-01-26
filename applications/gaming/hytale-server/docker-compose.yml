@@ -1,0 +1,88 @@
+---
+# Hytale Server - Docker Compose 設定
+# 參考: https://github.com/indifferentbroccoli/hytale-server-docker
+
+services:
+  hytale-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hytale-server
+    hostname: hytale-server
+    restart: unless-stopped
+
+    # 環境變數
+    environment:
+      # 使用者權限設定
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+
+      # 伺服器基本設定
+      - SERVER_NAME=${SERVER_NAME:-hytale-server}
+      - HYTALE_PORT=${HYTALE_PORT:-5520}
+      - DEFAULT_PORT=${DEFAULT_PORT:-${HYTALE_PORT:-5520}}
+      - MAX_PLAYERS=${MAX_PLAYERS:-20}
+      - VIEW_DISTANCE=${VIEW_DISTANCE:-12}
+      - MAX_MEMORY=${MAX_MEMORY:-8G}
+
+      # 認證設定
+      - AUTH_MODE=${AUTH_MODE:-authenticated}
+      - SESSION_TOKEN=${SESSION_TOKEN:-}
+      - IDENTITY_TOKEN=${IDENTITY_TOKEN:-}
+      - OWNER_UUID=${OWNER_UUID:-}
+
+      # 進階設定
+      - ENABLE_BACKUPS=${ENABLE_BACKUPS:-false}
+      - BACKUP_FREQUENCY=${BACKUP_FREQUENCY:-30}
+      - BACKUP_DIR=${BACKUP_DIR:-/home/hytale/backups}
+      - DISABLE_SENTRY=${DISABLE_SENTRY:-true}
+      - USE_AOT_CACHE=${USE_AOT_CACHE:-true}
+      - ACCEPT_EARLY_PLUGINS=${ACCEPT_EARLY_PLUGINS:-false}
+      - DOWNLOAD_ON_START=${DOWNLOAD_ON_START:-true}
+
+    # 網路模式：使用主機網路（減少 NAT 穿透問題，改善 UDP 連線品質）
+    network_mode: "host"
+
+    # 埠號映射 (使用 host 網路模式時此設定會被忽略)
+    # ports:
+    #   - "${HYTALE_PORT:-5520}:5520/udp"
+
+    # 掛載目錄 (統一在 hytale-data 下管理)
+    volumes:
+      - ./hytale-data/server-files:/home/hytale/server-files
+      - ./hytale-data/backups:/home/hytale/backups
+      - ./hytale-data/machine-id:/home/hytale/.machine-id
+
+    # 資源限制
+    deploy:
+      resources:
+        limits:
+          cpus: '${CPU_LIMIT:-8}'
+          memory: ${MEMORY_LIMIT:-10G}
+        reservations:
+          cpus: '${CPU_RESERVATION:-4}'
+          memory: ${MEMORY_RESERVATION:-4G}
+
+    # 健康檢查
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "HytaleServer.jar"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5m
+
+    # 日誌設定
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    # 網路設定：使用 host 模式時不需要自定義網路
+    # networks:
+    #   - hytale-network
+
+# networks:
+#   hytale-network:
+#     driver: bridge
+#     name: hytale-network

@@ -1,0 +1,32 @@
+---
+# Hytale Server - 更新/下載專用 Compose
+# 使用方式: docker compose -f docker-compose.update.yml run --rm hytale-updater
+
+services:
+  hytale-updater:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hytale-updater
+
+    # 覆寫啟動命令，只執行下載
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        source /home/hytale/server/functions.sh
+        LogAction "Hytale Server 更新/下載工具"
+        download_server
+        LogSuccess "更新完成！"
+
+    # 環境變數
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+
+    # 掛載相同的資料目錄
+    volumes:
+      - ./hytale-data/server-files:/home/hytale/server-files
+      - ./hytale-data/machine-id:/home/hytale/.machine-id
+
+    # 不需要網路埠
+    network_mode: bridge
