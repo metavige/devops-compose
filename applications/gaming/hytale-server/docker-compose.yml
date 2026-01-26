@@ -19,7 +19,8 @@ services:
 
       # 伺服器基本設定
       - SERVER_NAME=${SERVER_NAME:-hytale-server}
-      - DEFAULT_PORT=${DEFAULT_PORT:-5520}
+      - HYTALE_PORT=${HYTALE_PORT:-5520}
+      - DEFAULT_PORT=${DEFAULT_PORT:-${HYTALE_PORT:-5520}}
       - MAX_PLAYERS=${MAX_PLAYERS:-20}
       - VIEW_DISTANCE=${VIEW_DISTANCE:-12}
       - MAX_MEMORY=${MAX_MEMORY:-8G}
@@ -33,6 +34,7 @@ services:
       # 進階設定
       - ENABLE_BACKUPS=${ENABLE_BACKUPS:-false}
       - BACKUP_FREQUENCY=${BACKUP_FREQUENCY:-30}
+      - BACKUP_DIR=${BACKUP_DIR:-/home/hytale/backups}
       - DISABLE_SENTRY=${DISABLE_SENTRY:-true}
       - USE_AOT_CACHE=${USE_AOT_CACHE:-true}
       - ACCEPT_EARLY_PLUGINS=${ACCEPT_EARLY_PLUGINS:-false}

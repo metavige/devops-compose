@@ -9,13 +9,13 @@ cd "$SERVER_FILES" || exit
 LogAction "Starting Hytale Dedicated Server"
 
 # Set defaults if not provided
-DEFAULT_PORT="${DEFAULT_PORT:-5520}"
+DEFAULT_PORT="${DEFAULT_PORT:-${HYTALE_PORT:-5520}}"
 SERVER_NAME="${SERVER_NAME:-hytale-server}"
 MAX_PLAYERS="${MAX_PLAYERS:-20}"
 VIEW_DISTANCE="${VIEW_DISTANCE:-12}"
 ENABLE_BACKUPS="${ENABLE_BACKUPS:-false}"
 BACKUP_FREQUENCY="${BACKUP_FREQUENCY:-30}"
-BACKUP_DIR="${BACKUP_DIR:-/home/hytale/server-files/backups}"
+BACKUP_DIR="${BACKUP_DIR:-/home/hytale/backups}"
 DISABLE_SENTRY="${DISABLE_SENTRY:-true}"
 USE_AOT_CACHE="${USE_AOT_CACHE:-true}"
 AUTH_MODE="${AUTH_MODE:-authenticated}"
