@@ -1,0 +1,11 @@
+# 只回答 $MY_DOMAIN 這個 zone，任何名稱一律指向本機，由 Traefik 依 Host 轉發。
+# 其他 DNS 查詢不經過這裡（macOS 的 /etc/resolver 只把這個 zone 交給本服務）。
+{$MY_DOMAIN}:53 {
+    template IN A {
+        answer "{{ .Name }} 60 IN A 127.0.0.1"
+    }
+    template IN AAAA {
+        rcode NOERROR
+    }
+    errors
+}

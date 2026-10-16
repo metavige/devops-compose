@@ -1,63 +1,44 @@
-version: '3'
-
 services:
-  # docker-proxy:
-  #   image: tecnativa/docker-socket-proxy
-  #   volumes:
-  #     # - ${HOME}/.local/share/containers/podman/machine/podman.sock:/var/docker/docker.sock
-  #     - /var/docker/docker.sock:/var/docker/docker.sock
-  #   ports:
-  #     - 127.0.0.1:2375:2375
-  #   privileged: true
+  coredns:
+    image: coredns/coredns:1.14.7
+    restart: unless-stopped
+    command: -conf /etc/coredns/Corefile
+    environment:
+      - MY_DOMAIN=${MY_DOMAIN}
+    ports:
+      - '10053:53/udp'
+      - '10053:53/tcp'
+    volumes:
+      - './coredns:/etc/coredns:ro'
+    labels:
+      - 'traefik.enable=false'
+
   traefik:
-    # restart: always
-    privileged: true
-    # depends_on:
-    #   - docker-proxy
-    image: 'traefik:2.9'
-    # hostname: traefik-devops
+    image: 'traefik:v3.7.15'
+    restart: unless-stopped
     command:
       - '--log.level=INFO'
-      - '--global.checkNewVersion=true'
+      - '--global.checkNewVersion=false'
+      - '--global.sendAnonymousUsage=false'
       - '--providers.docker=true'
       - '--providers.docker.exposedbydefault=true'
-      - '--entrypoints.web.address=:80'
-      - '--entrypoints.websecure.address=:443'
-      - '--api.insecure=true'
-      - '--api.dashboard=true'
+      - '--providers.docker.defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.$MY_DOMAIN`)'
       - '--providers.file.directory=/etc/traefik/dynamic_conf'
-      - '--providers.docker.defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.docker.internal`)'
+      - '--entrypoints.web.address=:80'
+      - '--entrypoints.web.http.redirections.entrypoint.to=websecure'
+      - '--entrypoints.web.http.redirections.entrypoint.scheme=https'
+      - '--entrypoints.websecure.address=:443'
+      - '--api.dashboard=true'
     labels:
-      - 'traefik.http.routers.traefik.tls=true'
-      - 'traefik.http.routers.traefik.rule=HostRegexp(`traefik.$MY_DOMAIN`)'
-      - 'traefik.http.routers.traefik.entrypoints=websecure'
       - 'traefik.http.routers.traefik.service=api@internal'
-      # - 'traefik.http.services.traefik.loadbalancer.server.port=8080'
-      # middleware redirect
-      - 'traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https'
-      # global redirect to https
-      - 'traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)'
-      - 'traefik.http.routers.http-catchall.entrypoints=web'
-      - 'traefik.http.routers.http-catchall.middlewares=redirect-to-https@docker'
+      - 'traefik.http.routers.traefik.entrypoints=websecure'
+      - 'traefik.http.routers.traefik.tls=true'
     ports:
       - '80:80'
       - '443:443'
-      # - '8888:8080'
     volumes:
-      # - ./traefik.yml:/traefik.yaml:ro
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
       - '/etc/localtime:/etc/localtime:ro'
-      - './certs:/certs'
+      - './certs:/certs:ro'
       - './conf:/etc/traefik/dynamic_conf:ro'
       - './logs:/var/log/traefik'
-  whoami:
-    image: traefik/whoami
-    container_name: whoami
-    labels:
-      - 'traefik.http.routers.whoami.entrypoints=websecure'
-      - 'traefik.http.routers.whoami.tls=true'
-      # - 'traefik.http.routers.whoami.rule=hostregexp(`whoami.$MY_DOMAIN`)'
-# networks:
-#   default:
-#     external: true
-#     name: devops

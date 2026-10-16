@@ -5,41 +5,69 @@ dotenv:
 
 tasks:
 
-  # default:
-  #   desc: 服務資訊
-  #   cmds:
-  #     - task: .compose-run
-  #       vars:
-  #         COMPOSE_CMD: "config"
+  default:
+    desc: 啟動 traefik + coredns
+    cmds:
+      - task: start
+        vars:
+          SERVICE: traefik
+
+  network:
+    desc: 建立共用 network（已存在則略過）
+    cmds:
+      - docker network inspect "$DEFAULT_NETWORK" >/dev/null 2>&1 || docker network create "$DEFAULT_NETWORK"
+
+  dns:setup:
+    desc: 設定 macOS resolver，把 *.$MY_DOMAIN 交給 CoreDNS（需要 sudo）
+    cmds:
+      - sudo mkdir -p /etc/resolver
+      - printf 'nameserver 127.0.0.1\nport 10053\n' | sudo tee "/etc/resolver/$MY_DOMAIN" >/dev/null
+      - cat "/etc/resolver/$MY_DOMAIN"
+
+  dns:check:
+    desc: 驗證 *.$MY_DOMAIN 解析
+    cmds:
+      - dscacheutil -q host -a name "traefik.$MY_DOMAIN"
 
   start:
-    desc: 啟動服務
+    desc: 啟動服務（task start -- <service>）
     cmds:
       - task: .compose-run
         vars:
           COMPOSE_CMD: "up -d"
+          SERVICE: "{{.SERVICE | default .CLI_ARGS}}"
 
   stop:
-    desc: 停止服務
+    desc: 停止服務（task stop -- <service>）
     cmds:
       - task: .compose-run
         vars:
           COMPOSE_CMD: "stop"
+          SERVICE: "{{.SERVICE | default .CLI_ARGS}}"
 
   down:
-    desc: 結束服務
+    desc: 結束服務（task down -- <service>）
     cmds:
       - task: .compose-run
         vars:
           COMPOSE_CMD: "down"
+          SERVICE: "{{.SERVICE | default .CLI_ARGS}}"
+
+  config:
+    desc: 檢視合併後的 compose 設定（task config -- <service>）
+    cmds:
+      - task: .compose-run
+        vars:
+          COMPOSE_CMD: "config"
+          SERVICE: "{{.SERVICE | default .CLI_ARGS}}"
 
   .compose-run:
     internal: true
     desc: compose 指令
-    vars:
-      # COMPOSE_CMD: "config"
-      SERVICE_NAME: "{{.CLI_ARGS}}"
-      COMPOSE_FILE: "{{.SERVICE_NAME}}/docker-compose.yml"
-      NETWORK_FILE: "$BASE_NETWORK_YAML"
+    requires:
+      vars: [SERVICE, COMPOSE_CMD]
+    preconditions:
+      - sh: test -f "{{.SERVICE}}/docker-compose.yml"
+        msg: "找不到 {{.SERVICE}}/docker-compose.yml，用法：task start -- <service>"
     cmds:
-      - docker-compose --project-directory={{.SERVICE_NAME}} -f {{.NETWORK_FILE}} -f {{.COMPOSE_FILE}} {{.COMPOSE_CMD}}
+      - docker compose --project-directory={{.SERVICE}} --env-file=.env -f $BASE_NETWORK_YAML -f {{.SERVICE}}/docker-compose.yml {{.COMPOSE_CMD}}
