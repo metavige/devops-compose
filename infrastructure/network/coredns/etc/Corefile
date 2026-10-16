@@ -1,6 +1,0 @@
-.:53 {
-    file docker.internal
-    forward . 8.8.8.8 1.1.1.1
-    log
-    errors
-}

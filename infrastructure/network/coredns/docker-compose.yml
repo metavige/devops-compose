@@ -1,10 +1,23 @@
+# CoreDNS - 本機 DNS 服務
+# 回答 *.${MY_DOMAIN} → 127.0.0.1，讓瀏覽器與 CLI 透過 Traefik 存取各服務。
+# macOS 以 /etc/resolver/${MY_DOMAIN} 指向 127.0.0.1:10053（./init.sh 或 task dns:setup 會寫入）。
+
 services:
   coredns:
-    image: coredns/coredns
-    privileged: true
+    image: coredns/coredns:${COREDNS_VERSION:-1.14.7}
+    restart: unless-stopped
+    command: -conf /etc/coredns/Corefile
+    environment:
+      - MY_DOMAIN=${MY_DOMAIN:-docker.internal}
     ports:
-      - 10053:53/udp
-      - 10053:53/tcp
+      - '10053:53/udp'
+      - '10053:53/tcp'
     volumes:
-      - ./etc:/root:ro
-    command: -conf /root/Corefile
+      - ./Corefile:/etc/coredns/Corefile:ro
+    labels:
+      - 'traefik.enable=false'
+    healthcheck:
+      test: ['CMD', '/coredns', '-version']
+      interval: 30s
+      timeout: 5s
+      retries: 3

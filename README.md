@@ -17,6 +17,7 @@
 - Docker Compose >= 2.0
 - Make (可選)
 - Task (可選) - `brew install go-task/tap/go-task`
+- mkcert (建議) - `brew install mkcert`，產生瀏覽器信任的本機憑證
 - direnv (可選) - `brew install direnv`
 
 ## 🚀 快速開始
@@ -28,7 +29,8 @@
 git clone <repository-url>
 cd devops-compose
 
-# 初始化環境 (建立網路、憑證、啟動核心服務)
+# 初始化環境 (建立網路、憑證、DNS resolver、啟動核心服務)
+# 寫入 /etc/resolver 時會要求 sudo
 ./init.sh
 ```
 
@@ -138,6 +140,33 @@ task logs infrastructure/storage/postgres
 - 自動 SSL 憑證
 - 服務發現和負載均衡
 
+### DNS 解析
+
+`*.docker.internal` 不是公開網域，由 repo 內的 CoreDNS 容器（隨核心服務啟動，監聽主機 port 10053）回答，一律指向 `127.0.0.1`，再由 Traefik 依 Host 轉發。不需要在主機安裝 dnsmasq。
+
+macOS 只要讓系統 resolver 把這個網域交給 CoreDNS，`./init.sh` 會自動寫入（需要 sudo），也可以手動執行：
+
+```bash
+task dns:setup        # 或 make dns-setup
+```
+
+寫入的內容是 `/etc/resolver/docker.internal`：
+
+```
+nameserver 127.0.0.1
+port 10053
+```
+
+驗證：
+
+```bash
+task dns:check        # 或 make dns-check
+```
+
+注意 `dig`、`nslookup` 不會經過 `/etc/resolver`，直接用它們查會以為沒生效；請用 `dscacheutil` 或 `curl` 驗證。
+
+離線也能用，因為查詢不出本機。若在其他機器臨時使用、不想動系統設定，可改用公開的萬用 DNS，例如把 `.env` 的 `MY_DOMAIN` 改成 `127.0.0.1.nip.io`（需要能連外，且可能被企業 DNS 的 rebinding 防護擋掉），並重新產生涵蓋該網域的憑證。
+
 ### 常見服務 URL
 
 | 服務 | URL | 描述 |
@@ -214,7 +243,7 @@ MY_DOMAIN=docker.internal
 DEFAULT_NETWORK=devops
 
 # Traefik 版本
-TRAEFIK_VERSION=v3.5
+TRAEFIK_VERSION=v3.7
 
 # 時區
 TZ=Asia/Taipei
@@ -293,6 +322,25 @@ make start-core
 
    # 查看 Traefik 日誌
    make logs service=core
+   ```
+
+4. **DNS 無法解析 (`*.docker.internal` 全部打不開)**
+   ```bash
+   # 確認 coredns 容器在跑
+   docker ps --filter name=coredns
+
+   # 確認 resolver 設定，內容應為 nameserver 127.0.0.1 / port 10053
+   cat /etc/resolver/docker.internal
+
+   # 用系統 resolver 驗證 (dig 不適用)
+   task dns:check
+   ```
+
+5. **憑證過期**
+   ```bash
+   # mkcert 憑證效期約 2 年 3 個月
+   openssl x509 -in infrastructure/network/traefik/certs/traefik.crt -noout -dates
+   # 過期就刪掉重跑 init.sh
    ```
 
 ### 日誌查看

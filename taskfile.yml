@@ -24,6 +24,10 @@ tasks:
       - echo "  • task start:core     - 啟動核心服務 (Traefik + Registry)"
       - echo "  • task stop:core      - 停止核心服務"
       - echo ""
+      - echo "DNS:"
+      - echo "  • task dns:setup      - 設定本機 resolver (一次性, 需要 sudo)"
+      - echo "  • task dns:check      - 驗證 *.docker.internal 解析"
+      - echo ""
       - echo "基礎設施層:"
       - echo "  • task start:postgres - 啟動 PostgreSQL"
       - echo "  • task start:redis    - 啟動 Redis"
@@ -55,6 +59,20 @@ tasks:
       - task: .search-services
         vars:
           KEYWORD: "{{.CLI_ARGS}}"
+
+  # DNS
+  dns:setup:
+    desc: 設定 macOS resolver，把 *.$MY_DOMAIN 交給 CoreDNS（一次性，需要 sudo）
+    cmds:
+      - sudo mkdir -p /etc/resolver
+      - printf 'nameserver 127.0.0.1\nport 10053\n' | sudo tee "/etc/resolver/$MY_DOMAIN" >/dev/null
+      - cat "/etc/resolver/$MY_DOMAIN"
+
+  dns:check:
+    desc: 驗證 *.$MY_DOMAIN 解析（系統 resolver 與 CoreDNS 各查一次）
+    cmds:
+      - dscacheutil -q host -a name "traefik.$MY_DOMAIN"
+      - dig +short @127.0.0.1 -p 10053 "traefik.$MY_DOMAIN"
 
   # 核心服務
   start:core:

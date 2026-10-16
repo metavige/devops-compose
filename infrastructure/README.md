@@ -45,14 +45,12 @@ docker-compose -f infrastructure/monitoring/docker-compose.yml up -d
 
 ### 🌐 Network Layer (網路層)
 **必須最先啟動**
-- **Traefik**: 反向代理和負載均衡器 (v3.5)
-- **DNSmasq**: 本地 DNS 服務 (*.docker.internal)
-- **CoreDNS**: 備用 DNS 服務
+- **Traefik**: 反向代理和負載均衡器 (v3.7)
+- **CoreDNS**: 本地 DNS 服務，回答 *.docker.internal → 127.0.0.1 (主機 port 10053)
 - **Whoami**: Traefik 測試服務
 
 **存取點**:
 - Traefik Dashboard: https://traefik.docker.internal
-- DNSmasq Admin: https://dnsmasq.docker.internal
 - Whoami Test: https://whoami.docker.internal
 
 ### 💾 Storage Layer (儲存層)
@@ -98,7 +96,7 @@ MY_DOMAIN=docker.internal
 DEFAULT_NETWORK=devops
 
 # 服務版本
-TRAEFIK_VERSION=v3.5
+TRAEFIK_VERSION=v3.7
 POSTGRES_VERSION=16
 REDIS_VERSION=7-alpine
 KEYCLOAK_VERSION=26.3.0
@@ -131,8 +129,8 @@ KEYCLOAK_ADMIN=admin
 
 2. **DNS 解析失敗**
    ```bash
-   # 檢查 dnsmasq 狀態
-   docker-compose -f infrastructure/network/docker-compose.yml ps dnsmasq
+   # 檢查 coredns 狀態
+   docker-compose -f infrastructure/network/docker-compose.yml ps coredns
    ```
 
 3. **資料庫連線問題**

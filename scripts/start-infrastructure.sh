@@ -45,15 +45,10 @@ DEFAULT_NETWORK=devops
 BASE_NETWORK_YAML="docker-compose.network.yaml"
 
 # 服務版本
-TRAEFIK_VERSION=v3.5
-DNSMASQ_VERSION=latest
+TRAEFIK_VERSION=v3.7
 POSTGRES_VERSION=16
 REDIS_VERSION=7-alpine
 KEYCLOAK_VERSION=26.3.0
-
-# DNS 設定
-DNSMASQ_USER=admin
-DNSMASQ_PASS=admin
 
 # PostgreSQL 設定
 POSTGRES_USER=postgres
@@ -77,14 +72,14 @@ EOF
 fi
 
 # 載入環境變數
-source "$PROJECT_DIR/.env"
+set -a; source "$PROJECT_DIR/.env"; set +a
 
 cd "$PROJECT_DIR"
 
 # 階段 1: 網路層 (最重要，必須先啟動)
 echo -e "${BLUE}📡 階段 1: 啟動網路層...${NC}"
 echo "  - Traefik (反向代理)"
-echo "  - DNSmasq (DNS 服務)"
+echo "  - CoreDNS (DNS 服務)"
 echo "  - Whoami (測試服務)"
 
 docker-compose -f infrastructure/network/docker-compose.yml up -d
@@ -138,7 +133,6 @@ echo -e "${BLUE}📊 Infrastructure 服務狀態:${NC}"
 echo ""
 echo -e "${GREEN}🌐 網路層服務:${NC}"
 echo "  • Traefik Dashboard: https://traefik.$MY_DOMAIN"
-echo "  • DNSmasq Admin: https://dnsmasq.$MY_DOMAIN"
 echo "  • Whoami Test: https://whoami.$MY_DOMAIN"
 echo ""
 echo -e "${GREEN}💾 儲存層服務:${NC}"

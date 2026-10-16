@@ -36,7 +36,7 @@ start_core() {
 
     # 載入環境變數
     if [ -f .env ]; then
-        source .env
+        set -a; source .env; set +a
     fi
 
     check_network
