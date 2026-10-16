@@ -1,30 +1,26 @@
-version: '3'
-
 services:
   traefik:
-    image: 'traefik:${TRAEFIK_VERSION:-v3.5}'
+    image: 'traefik:${TRAEFIK_VERSION:-v3.7}'
     command:
     - '--log.level=INFO'
     - '--global.checkNewVersion=true'
     - '--providers.docker=true'
     - '--providers.docker.exposedbydefault=true'
+    - '--providers.docker.defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.${MY_DOMAIN:-docker.internal}`)'
+    - '--providers.file.directory=/etc/traefik/dynamic_conf'
     - '--entrypoints.web.address=:80'
+    - '--entrypoints.web.http.redirections.entrypoint.to=websecure'
+    - '--entrypoints.web.http.redirections.entrypoint.scheme=https'
     - '--entrypoints.websecure.address=:443'
     - '--entrypoints.mysql.address=:3306/tcp'
     - '--entrypoints.postgres.address=:5432/tcp'
     - '--api.insecure=true' # Allow insecure API for development
     - '--api.dashboard=true'
-    - '--providers.file.directory=/etc/traefik/dynamic_conf'
-    - '--providers.docker.defaultrule=Host(`{{ index .Labels "com.docker.compose.service" }}.docker.internal`)'
     labels:
     - 'traefik.http.routers.traefik.tls=true'
     - 'traefik.http.routers.traefik.rule=Host(`traefik.$MY_DOMAIN`)'
     - 'traefik.http.routers.traefik.entrypoints=websecure'
     - 'traefik.http.routers.traefik.service=api@internal'
-    - 'traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https'
-    - 'traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)'
-    - 'traefik.http.routers.http-catchall.entrypoints=web'
-    - 'traefik.http.routers.http-catchall.middlewares=redirect-to-https@docker'
     ports:
     - '80:80'
     - '443:443'

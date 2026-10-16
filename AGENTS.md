@@ -172,7 +172,7 @@ docker network inspect devops
 
 ### DNS Resolution
 - Services use `{service-name}.docker.internal` format
-- DNSMasq or CoreDNS handles internal resolution
+- CoreDNS (in `core/`, host port 10053) answers `*.{MY_DOMAIN}` with 127.0.0.1; macOS `/etc/resolver/{MY_DOMAIN}` points to it (`./init.sh` or `task dns:setup` writes it)
 - Add entries to hosts file if needed
 
 ### Service Dependencies

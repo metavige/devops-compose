@@ -2,6 +2,7 @@
 # 簡化的服務管理介面
 
 include .env
+export
 
 # 變數定義
 ROOT_DIR := $(shell pwd)
@@ -63,7 +64,7 @@ define run_compose
 endef
 
 # 目標定義
-.PHONY: help init start stop restart down status logs config start-core stop-core list search
+.PHONY: help init dns-setup dns-check start stop restart down status logs config start-core stop-core list search
 
 help:
 	@echo "🎉 DevOps Compose 可用指令:"
@@ -71,6 +72,10 @@ help:
 	@echo "核心服務:"
 	@echo "  make start-core        - 啟動核心服務 (Traefik + Registry)"
 	@echo "  make stop-core         - 停止核心服務"
+	@echo ""
+	@echo "DNS:"
+	@echo "  make dns-setup         - 設定本機 resolver (一次性, 需要 sudo)"
+	@echo "  make dns-check         - 驗證 *.docker.internal 解析"
 	@echo ""
 	@echo "服務管理:"
 	@echo "  make start service=<name>   - 啟動指定服務"
@@ -104,6 +109,16 @@ start-core:
 stop-core:
 	@echo "🛑 停止核心基礎服務..."
 	@./scripts/stop-core.sh
+
+dns-setup:
+	@echo "🌐 設定 /etc/resolver/$(MY_DOMAIN) → 127.0.0.1:10053 (需要 sudo)"
+	@sudo mkdir -p /etc/resolver
+	@printf 'nameserver 127.0.0.1\nport 10053\n' | sudo tee /etc/resolver/$(MY_DOMAIN) >/dev/null
+	@cat /etc/resolver/$(MY_DOMAIN)
+
+dns-check:
+	@dscacheutil -q host -a name traefik.$(MY_DOMAIN)
+	@dig +short @127.0.0.1 -p 10053 traefik.$(MY_DOMAIN)
 
 start: check-service
 	@echo "🚀 啟動服務: $(service)"

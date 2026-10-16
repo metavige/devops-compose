@@ -2,25 +2,25 @@
 # 此層包含所有網路相關的基礎設施服務
 
 services:
+  # CoreDNS - 本機 DNS 服務 (*.${MY_DOMAIN} → 127.0.0.1)
+  coredns:
+    extends:
+      file: ./coredns/docker-compose.yml
+      service: coredns
+
   # Traefik - 反向代理和負載平衡器
   traefik:
     extends:
       file: ./traefik/docker-compose.yml
       service: traefik
+    depends_on:
+      - coredns
 
   # Whoami - Traefik 測試服務
   whoami:
     extends:
       file: ./traefik/docker-compose.yml
       service: whoami
-
-  # DNSmasq - 本地 DNS 服務
-  dnsmasq:
-    extends:
-      file: ./dnsmasq/docker-compose.yml
-      service: dnsmasq
-    depends_on:
-      - traefik
 
 networks:
   default:

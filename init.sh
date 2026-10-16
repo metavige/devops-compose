@@ -58,7 +58,7 @@ setup_env() {
 # DevOps Compose 環境變數
 MY_DOMAIN=docker.internal
 DEFAULT_NETWORK=devops
-TRAEFIK_VERSION=v3.5
+TRAEFIK_VERSION=v3.7
 
 # 時區設定
 TZ=Asia/Taipei
@@ -72,7 +72,7 @@ EOF
     fi
 
     # 載入環境變數
-    source .env
+    set -a; source .env; set +a
 }
 
 # 建立 Docker 網路
@@ -127,6 +127,31 @@ setup_directories() {
     log_success "目錄結構已建立"
 }
 
+# 設定本機 DNS resolver，讓 *.$MY_DOMAIN 交給 CoreDNS (127.0.0.1:10053) 解析
+setup_dns() {
+    log_info "設定本機 DNS resolver..."
+
+    local domain="${MY_DOMAIN:-docker.internal}"
+
+    if [ "$(uname)" != "Darwin" ]; then
+        log_warning "非 macOS：請手動把 *.${domain} 指向 127.0.0.1:10053 (Linux 可用 systemd-resolved)"
+        return 0
+    fi
+
+    local resolver_file="/etc/resolver/${domain}"
+    local expected
+    expected="$(printf 'nameserver 127.0.0.1\nport 10053')"
+    if [ -f "$resolver_file" ] && [ "$(cat "$resolver_file")" = "$expected" ]; then
+        log_info "resolver 設定已存在，跳過"
+        return 0
+    fi
+
+    log_info "寫入 ${resolver_file} (需要 sudo)"
+    sudo mkdir -p /etc/resolver
+    printf 'nameserver 127.0.0.1\nport 10053\n' | sudo tee "$resolver_file" > /dev/null
+    log_success "resolver 設定完成"
+}
+
 # 啟動核心服務
 start_core_services() {
     log_info "啟動核心基礎服務..."
@@ -143,6 +168,13 @@ start_core_services() {
 # 驗證服務狀態
 verify_services() {
     log_info "驗證服務狀態..."
+
+    # 檢查 DNS（走系統 resolver，dig 不會經過 /etc/resolver）
+    if dscacheutil -q host -a name "traefik.${MY_DOMAIN:-docker.internal}" 2>/dev/null | grep -q '127.0.0.1'; then
+        log_success "✓ DNS: *.${MY_DOMAIN:-docker.internal} → 127.0.0.1"
+    else
+        log_warning "⚠ DNS 尚未解析，檢查 /etc/resolver/${MY_DOMAIN:-docker.internal} 與 coredns 容器"
+    fi
 
     # 檢查 Traefik
     if curl -sf https://traefik.docker.internal/api/version > /dev/null 2>&1; then
@@ -232,6 +264,7 @@ main() {
     setup_env
     setup_network
     setup_directories
+    setup_dns
     start_core_services
     verify_services
     setup_docker_daemon
