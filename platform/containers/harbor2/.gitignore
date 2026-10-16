@@ -1,0 +1,3 @@
+# Harbor 執行期資料與日誌 (docker-compose.yml 的 bind mount)
+harbor-data/
+harbor-log/
