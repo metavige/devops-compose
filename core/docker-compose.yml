@@ -67,7 +67,6 @@ services:
   registry-nginx:
     image: nginx:stable
     restart: unless-stopped
-    hostname: registry.docker.internal
     volumes:
       - '../infrastructure/docker/registry/nginx/nginx.conf:/etc/nginx/nginx.conf'
     labels:
